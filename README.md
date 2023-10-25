@@ -3,6 +3,10 @@ Are you financially challenged, skint, or just hilariously frugal to purchase an
 Still, you're desperately yearning for those snazzy Kibana alerting features? 
 Well, look no further because this repository has got your penny-pinching back!
 
+## Quick start guide
+
+## Docker setup
+
 ## To do's
 What is still needed
 	* Quick start
