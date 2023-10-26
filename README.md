@@ -25,7 +25,7 @@ metadata:
 type: kubernetes.io/basic-auth
 stringData:
   username: alerting
-  password: A13rt1n9
+  password: A13rt1n9 # Change this please!
   roles: kibana_system
 ---
 apiVersion: v1
