@@ -88,7 +88,7 @@ spec:
             cpu: 500m 
         env:
         - name: Elastic__Url
-          value: 'https://elasticsearch-es-internal-http:9200
+          value: 'https://elasticsearch-es-internal-http:9200'
         - name: Elastic__UserName
           valueFrom:
             secretKeyRef:
