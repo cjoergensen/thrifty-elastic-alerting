@@ -1,0 +1,23 @@
+{
+  "Groups": {
+    "DevTeam": {
+      "Connectors": {
+        "Smtp" : {
+          "Subject": "dfg dfgdfg dfg {alert.name}",
+          "Body": "sdfsdf sdfsdf",
+          "Audience": [
+            "ma@sdf.djk"
+          ]
+        },
+        "MsTeams" : {
+          "Message": "dfg dfgdfg dfg {alert.name}",
+          "WebHookUrl": "https://hejmor"
+        }
+      }
+    },
+    "Business": {
+      "Connectors" : {
+      }
+    }
+  }
+}

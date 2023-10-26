@@ -1,7 +1,7 @@
 ﻿{
   "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
-    "Elastic.Alerts": {
+    "Kibana.Alerts": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "environmentVariables": {

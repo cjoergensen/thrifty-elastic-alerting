@@ -1,9 +1,10 @@
-using Elastic.Alerts.Model;
-using Elastic.Alerts.Repositories;
+using Kibana.Alerts.Connectors;
+using Kibana.Alerts.Model;
+using Kibana.Alerts.Repositories;
 
-namespace Elastic.Alerts;
+namespace Kibana.Alerts;
 
-public class Worker(ILogger<Worker> logger, IAlertRepository alertRepository) : BackgroundService
+public class Worker(ILogger<Worker> logger, IAlertRepository alertRepository, ConnectorFactory connectorFactory, IConfiguration configuration) : BackgroundService
 {
     private List<Alert> currentAlerts;
 
@@ -29,13 +30,28 @@ public class Worker(ILogger<Worker> logger, IAlertRepository alertRepository) : 
 
                 if (currentAlert.ExecutionStatus.Status != alert.ExecutionStatus.Status) 
                 {
-                    logger.LogInformation("Alert status changed from {currentStatus} to {newStatus}", 
+                    logger.LogInformation("Alert status changed from {currentStatus} to {newStatus}",
                         currentAlert.ExecutionStatus.Status, alert.ExecutionStatus.Status);
+                    await SendAlerts(alert);
                     currentAlerts.Remove(currentAlert);
                     currentAlerts.Add(alert);
                 }
             }
             await Task.Delay(10000, stoppingToken);
+        }
+    }
+
+    private async Task SendAlerts(Alert alert)
+    {
+        foreach (var tag in alert.Tags)
+        {
+            var connectors = configuration.GetSection($"Groups:{tag}:Connectors").GetChildren().ToDictionary(x => x.Key, null).Keys.ToList();
+
+            foreach (var connector in connectors)
+            {
+                var connectorImpl = connectorFactory.Create(connector);
+                var result = await connectorImpl.TrySend(configuration.GetSection($"Groups:{tag}:Connectors:{connector}"));
+            }
         }
     }
 }

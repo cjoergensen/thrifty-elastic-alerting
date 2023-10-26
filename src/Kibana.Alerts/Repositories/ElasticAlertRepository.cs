@@ -1,9 +1,9 @@
-﻿using Elastic.Alerts.Model;
+﻿using Kibana.Alerts.Model;
 using Elastic.Clients.Elasticsearch;
 using Elastic.Transport;
 using System.Reflection.Metadata.Ecma335;
 
-namespace Elastic.Alerts.Repositories;
+namespace Kibana.Alerts.Repositories;
 public interface IAlertRepository
 {
     Task<IEnumerable<Alert>> GetAll();

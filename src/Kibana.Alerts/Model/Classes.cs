@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Elastic.Alerts.Model;
+namespace Kibana.Alerts.Model;
 
 public class ExecutionStatus
 {
