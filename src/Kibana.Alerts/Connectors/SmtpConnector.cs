@@ -18,20 +18,25 @@ public sealed class SmtpConnector(IConfiguration configuration) : IConnector
     {
         var port = int.Parse(configuration["Smtp:Port"]);
         var host = configuration["Smtp:Host"];
-        var sender = int.Parse(configuration["Smtp:Sender"]);
+        var sender = configuration["Smtp:Sender"];
 
         var settings = new SmtpSettings();
-        configuration.Bind(settings);
+        configurationSection.Bind(settings);
 
         var bodyTemplate = Handlebars.Compile(settings.Body);
         var body = bodyTemplate(alert);
+
+        var subjectTemplate = Handlebars.Compile(settings.Subject);
+        var subject = subjectTemplate(alert);
+
         SmtpClient client = new(host, port);
         MailMessage message = new()
         {
             IsBodyHtml = true,
             Body = body,
+            From = new MailAddress(sender),
             Priority = MailPriority.High,
-            Subject = alert.Name
+            Subject = subject
         };
 
         foreach (var recipient in settings.Audience)

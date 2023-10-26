@@ -3,20 +3,18 @@
     "DevTeam": {
       "Connectors": {
         "Smtp": {
-          "Subject": "⏰ {{Name}} ⏰",
-          "Body": "<html><body> <h1>{Name}</h1></body></html>",
-          "Sender": "cgj@andel.dk",
-          "Host": "ismtp.seas.local",
-          "Port": 25,
+          "Subject": "⏰ {{Name}} is now {{ExecutionStatus.Status}} ⏰",
+          "Body": "<html><body> <h1>{{Name}}</h1><a href='{{RuleUrl}}'>Check the status here</a></body></html>",
           "Audience": [
             "cgj@andel.dk",
-            "min_pan@andel.dk"
+            "min_pan@andel.dk",
+            "jod@andel.dk"
           ]
-        },
-        "MsTeams" : {
-          "Message": "dfg dfgdfg dfg {alert.name}",
-          "WebHookUrl": "https://hejmor"
         }
+        //"WebHook": {
+        //  "Message": "dfg dfgdfg dfg {{Name}}",
+        //  "WebHookUrl": "https://hejmor"
+        //}
       }
     },
     "Business": {

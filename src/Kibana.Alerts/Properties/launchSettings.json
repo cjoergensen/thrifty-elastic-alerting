@@ -6,13 +6,11 @@
         "DOTNET_ENVIRONMENT": "Development",
         "Elastic__Url": "https://localhost:53809",
         "Elastic__UserName": "alerting",
-        "Elastic__Password": "<something>",
-        "Elastic__Certificate": ""
+        "Elastic__Password": "jNrDW_C9i2jHzC-",
+        "Elastic__Certificate": "",
+        "Elastic__PublicUrl": "https://mdm-dev.seas.local:30443/kibana/"
       },
       "dotnetRunMessages": true
-    },
-    "Docker": {
-      "commandName": "Docker"
     }
   },
   "$schema": "http://json.schemastore.org/launchsettings.json"
