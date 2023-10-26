@@ -19,7 +19,7 @@ public sealed class WebHookConnector : IConnector
 
         var settings = new SmtpSettings();
         configuration.Bind(settings);
-        // Call SMTP
+        // Call WebHook
         return true;
     }
 }
