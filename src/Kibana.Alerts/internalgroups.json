@@ -2,11 +2,15 @@
   "Groups": {
     "DevTeam": {
       "Connectors": {
-        "Smtp" : {
-          "Subject": "dfg dfgdfg dfg {alert.name}",
-          "Body": "sdfsdf sdfsdf",
+        "Smtp": {
+          "Subject": "⏰ {{Name}} ⏰",
+          "Body": "<html><body> <h1>{Name}</h1></body></html>",
+          "Sender": "cgj@andel.dk",
+          "Host": "ismtp.seas.local",
+          "Port": 25,
           "Audience": [
-            "ma@sdf.djk"
+            "cgj@andel.dk",
+            "min_pan@andel.dk"
           ]
         },
         "MsTeams" : {

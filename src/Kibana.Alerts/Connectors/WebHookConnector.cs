@@ -1,4 +1,6 @@
-﻿namespace Kibana.Alerts.Connectors;
+﻿using Kibana.Alerts.Model;
+
+namespace Kibana.Alerts.Connectors;
 public class WebHookSettings
 {
     public string Message { get; set; }
@@ -12,7 +14,8 @@ public sealed class WebHookConnector : IConnector
     {
         this.configuration = configuration;
     }
-    public async Task<bool> TrySend(IConfigurationSection configurationSection)
+
+    public async Task<bool> TrySend(Alert alert, IConfigurationSection configurationSection, CancellationToken cancellationToken = default)
     {
         var port = int.Parse(configuration["Smtp:Port"]);
         var host = int.Parse(configuration["Smtp:Host"]);

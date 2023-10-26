@@ -41,7 +41,7 @@ public class Worker(ILogger<Worker> logger, IAlertRepository alertRepository, Co
         }
     }
 
-    private async Task SendAlerts(Alert alert)
+    private async Task SendAlerts(Alert alert, CancellationToken cancellationToken = default)
     {
         foreach (var tag in alert.Tags)
         {
@@ -50,7 +50,7 @@ public class Worker(ILogger<Worker> logger, IAlertRepository alertRepository, Co
             foreach (var connector in connectors)
             {
                 var connectorImpl = connectorFactory.Create(connector);
-                var result = await connectorImpl.TrySend(configuration.GetSection($"Groups:{tag}:Connectors:{connector}"));
+                var result = await connectorImpl.TrySend(alert, configuration.GetSection($"Groups:{tag}:Connectors:{connector}"), cancellationToken);
             }
         }
     }

@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Kibana.Alerts.Model;
 
 namespace Kibana.Alerts.Connectors;
 
 public interface IConnector
 {
-    Task<bool> TrySend(IConfigurationSection configurationSection);
+    Task<bool> TrySend(Alert alert, IConfigurationSection configurationSection, CancellationToken cancellationToken = default);
 }
 public class ConnectorFactory(IServiceProvider services)
 {

@@ -1,33 +1,45 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using HandlebarsDotNet;
+using Kibana.Alerts.Model;
+using System.Net.Mail;
 
 namespace Kibana.Alerts.Connectors;
 public class SmtpSettings
 {
     public string Subject { get; set; }
     public string Body { get; set; }
+    public string Sender { get; set; }
     public List<string> Audience {  get; set; }
 }
-public sealed class SmtpConnector : IConnector
+public sealed class SmtpConnector(IConfiguration configuration) : IConnector
 {
-    private readonly IConfiguration configuration;
+    private readonly IConfiguration configuration = configuration;
 
-    public SmtpConnector(IConfiguration configuration)
-    {
-        this.configuration = configuration;
-    }
-    public async Task<bool> TrySend(IConfigurationSection configurationSection)
+    public async Task<bool> TrySend(Alert alert, IConfigurationSection configurationSection, CancellationToken cancellationToken = default)
     {
         var port = int.Parse(configuration["Smtp:Port"]);
-        var host = int.Parse(configuration["Smtp:Host"]);
-       
+        var host = configuration["Smtp:Host"];
+        var sender = int.Parse(configuration["Smtp:Sender"]);
+
         var settings = new SmtpSettings();
         configuration.Bind(settings);
-        // Call SMTP
+
+        var bodyTemplate = Handlebars.Compile(settings.Body);
+        var body = bodyTemplate(alert);
+        SmtpClient client = new(host, port);
+        MailMessage message = new()
+        {
+            IsBodyHtml = true,
+            Body = body,
+            Priority = MailPriority.High,
+            Subject = alert.Name
+        };
+
+        foreach (var recipient in settings.Audience)
+        {
+            message.Bcc.Add(recipient);
+        }
+
+        await client.SendMailAsync(message, cancellationToken);
         return true;
     }
 }
