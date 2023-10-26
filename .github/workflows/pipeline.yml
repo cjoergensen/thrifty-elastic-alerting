@@ -1,0 +1,45 @@
+name: Deploy
+on:
+  push:
+    paths:
+      - "src/**"
+      - ".github/workflows/**"
+  pull_request:
+    paths:
+      - "src/**"
+      - ".github/workflows/**"
+
+env:
+  version: 1.0.${{github.run_number}}
+  imageRepository: "cjoergensen/thrifty-elastic-alerting"
+  DOCKER_CLI_EXPERIMENTAL: "enabled"
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.x.x
+    - name: Restore dependencies
+      run: dotnet restore ./src
+    - name: Build
+      run: dotnet build ./src -o /app -r linux-x64 /p:PublishReadyToRun=true
+    - name: Test
+      run: dotnet test ./src --no-build --verbosity normal
+    - name: Publish
+      run: dotnet publish ./src -o /publish -r linux-x64 --self-contained true --no-restore /p:PublishTrimmed=true /p:PublishReadyToRun=true /p:PublishSingleFile=true
+
+    - name: "docker - tag and push"
+      run: |
+          docker pull ${{env.imageRepository}}:build-${{env.version}}-amd64
+          docker manifest create ${{env.imageRepository}}:${{env.version}} ${{env.imageRepository}}:build-${{env.version}}-amd64
+          docker manifest create ${{env.imageRepository}}:latest ${{env.imageRepository}}:build-${{env.version}}-amd64
+          docker manifest push ${{env.imageRepository}}:${{env.version}}
+          docker manifest push ${{env.imageRepository}}:latest
+          docker tag ${{env.imageRepository}}:build-${{env.version}}-amd64 ${{env.imageRepository}}:${{env.version}}-amd64
+          docker push ${{env.imageRepository}}:${{env.version}}-amd64
