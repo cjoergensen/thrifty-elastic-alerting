@@ -1,7 +1,6 @@
 ﻿using Kibana.Alerts.Model;
 using Elastic.Clients.Elasticsearch;
 using Elastic.Transport;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Kibana.Alerts.Repositories;
 public interface IAlertRepository
@@ -15,7 +14,6 @@ public static class Extensions
     public static void AddElasticClient(this IServiceCollection services, IConfiguration configuration)
     {
         var settings = new ElasticsearchClientSettings(new Uri(configuration["Elastic:Url"]))
-            // .CertificateFingerprint(configuration["Elastic:Certificate"])
             .DefaultMappingFor<Document>(c => c.IndexName(IndexName))
             .Authentication(new BasicAuthentication(configuration["Elastic:UserName"], configuration["Elastic:Password"]));
 

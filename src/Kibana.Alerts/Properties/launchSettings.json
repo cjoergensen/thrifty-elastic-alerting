@@ -1,16 +1,19 @@
-﻿{
-  "$schema": "http://json.schemastore.org/launchsettings.json",
+{
   "profiles": {
     "Kibana.Alerts": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development",
         "Elastic__Url": "https://localhost:53809",
         "Elastic__UserName": "alerting",
         "Elastic__Password": "<something>",
         "Elastic__Certificate": ""
-      }
+      },
+      "dotnetRunMessages": true
+    },
+    "Docker": {
+      "commandName": "Docker"
     }
-  }
+  },
+  "$schema": "http://json.schemastore.org/launchsettings.json"
 }
