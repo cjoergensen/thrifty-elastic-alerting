@@ -10,11 +10,11 @@
             "min_pan@andel.dk",
             "jod@andel.dk"
           ]
+        },
+        "MsTeams": {
+          "MessageCardJson": "{\"type\": \"AdaptiveCard\",\"body\": [{\"type\": \"TextBlock\",\"size\": \"Medium\",\"weight\": \"Bolder\",\"text\": \"${Name} \"},{\"type\": \"TextBlock\",\"text\": \"${Name} now has status: ${ExecutionStatus.Status}.\",\"wrap\": true}],\"actions\": [{\"type\": \"Action.OpenUrl\",\"title\": \"View details\",\"url\": \"${Ruleurl}\"}],\"$schema\": \"http:\/\/adaptivecards.io\/schemas\/adaptive-card.json\",\"version\": \"1.6\"}",
+          "WebHookUrl": ""
         }
-        //"WebHook": {
-        //  "Message": "dfg dfgdfg dfg {{Name}}",
-        //  "WebHookUrl": "https://hejmor"
-        //}
       }
     },
     "Business": {

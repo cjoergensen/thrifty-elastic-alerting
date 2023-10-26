@@ -8,7 +8,7 @@ builder.Configuration.AddJsonFile("/groups.json", optional: true, reloadOnChange
 builder.Services.AddHostedService<Worker>();
 builder.Services.AddElasticClient(builder.Configuration);
 builder.Services.AddKeyedTransient<IConnector, SmtpConnector>("smtp");
-builder.Services.AddKeyedTransient<IConnector, WebHookConnector>("webhook");
+builder.Services.AddKeyedTransient<IConnector, MsTeamsConnector>("webhook");
 builder.Services.AddSingleton<ConnectorFactory>();
 var host = builder.Build();
 host.Run();
