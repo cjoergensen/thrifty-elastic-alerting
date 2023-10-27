@@ -25,14 +25,9 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 8.x.x
-    - name: Restore dependencies
-      run: dotnet restore ./src
-    - name: Build
-      run: dotnet build ./src -o /app -r linux-x64 /p:PublishReadyToRun=true
-    - name: Test
-      run: dotnet test ./src --no-build --verbosity normal
+
     - name: Publish
-      run: dotnet publish ./src -o /publish -r linux-x64 --self-contained true --no-restore /p:PublishTrimmed=true /p:PublishReadyToRun=true /p:PublishSingleFile=true
+      run: dotnet publish ./src -o ./app -r linux-x64 --self-contained true /p:PublishTrimmed=true /p:PublishReadyToRun=true /p:PublishSingleFile=true
     - name: Build image
       shell: bash         
       run: docker build -t ${{env.imageRepository}}:build-${{env.version}} -f ./src/Kibana.Alerts .  
