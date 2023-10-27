@@ -11,7 +11,7 @@ on:
 
 env:
   version: 0.0.${{github.run_number}}
-  imageRepository: "cjoergensen/thrifty-elastic-alerting"
+  imageRepository: "cjoergensendk/thrifty-elastic-alerting"
   DOCKER_CLI_EXPERIMENTAL: "enabled"
 
 jobs:
