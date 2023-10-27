@@ -13,10 +13,6 @@ public class Worker(ILogger<Worker> logger, IAlertRepository alertRepository, Co
         currentAlerts = (await alertRepository.GetAll()).ToList();
         while (!stoppingToken.IsCancellationRequested)
         {
-            if (logger.IsEnabled(LogLevel.Information))
-            {
-                logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-            }
             var alerts = await alertRepository.GetAll();
             foreach (var alert in alerts)
             {
@@ -46,7 +42,11 @@ public class Worker(ILogger<Worker> logger, IAlertRepository alertRepository, Co
         foreach (var tag in alert.Tags)
         {
             var connectors = configuration.GetSection($"Groups:{tag}:Connectors").GetChildren().ToDictionary(x => x.Key, null).Keys.ToList();
-
+            if (!connectors.Any())
+            {
+                logger.LogWarning("Tag {tag} on alert {alertName} not mapped to any groups in groups.json", tag, alert.Name);
+                continue;
+            }
             foreach (var connector in connectors)
             {
                 try

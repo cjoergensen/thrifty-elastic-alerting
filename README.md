@@ -106,10 +106,8 @@ spec:
 
 ## To do's
 What is still needed
-	* Quick start
-		* Create alerting user in Kibana with correct rights
-		* Kubernetes deployment
 	* Documentation of docker settings
+    * How to tag an alert in kibana and add the tag to a group in groups.json
 	* Build script
 	* Deploy script to Docker Hub
 
