@@ -46,4 +46,5 @@ jobs:
           # docker manifest push ${{env.imageRepository}}:latest
           docker tag ${{env.imageRepository}}:${{ github.sha }} ${{env.imageRepository}}:latest
           docker tag ${{env.imageRepository}}:${{ github.sha }} ${{env.imageRepository}}:${{env.version}}
+          docker tag ${{env.imageRepository}}:${{ github.sha }} ${{env.imageRepository}}:${{ steps.vars.outputs.SHORT_SHA }}
           docker push --all-tags ${{env.imageRepository}}
