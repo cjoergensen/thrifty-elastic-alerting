@@ -10,11 +10,11 @@ public class SmtpSettings
     public string Sender { get; set; }
     public List<string> Audience {  get; set; }
 }
-public sealed class SmtpConnector(IConfiguration configuration) : IConnector
+public sealed class SmtpConnector(IConfiguration configuration, IHandlebars handlebars) : IConnector
 {
     private readonly IConfiguration configuration = configuration;
 
-    public async Task<bool> TrySend(Alert alert, IConfigurationSection configurationSection, CancellationToken cancellationToken = default)
+    public async Task Send(Alert alert, IConfigurationSection configurationSection, CancellationToken cancellationToken = default)
     {
         var port = int.Parse(configuration["Smtp:Port"]);
         var host = configuration["Smtp:Host"];
@@ -23,10 +23,10 @@ public sealed class SmtpConnector(IConfiguration configuration) : IConnector
         var settings = new SmtpSettings();
         configurationSection.Bind(settings);
 
-        var bodyTemplate = Handlebars.Compile(settings.Body);
+        var bodyTemplate = handlebars.Compile(settings.Body);
         var body = bodyTemplate(alert);
 
-        var subjectTemplate = Handlebars.Compile(settings.Subject);
+        var subjectTemplate = handlebars.Compile(settings.Subject);
         var subject = subjectTemplate(alert);
 
         SmtpClient client = new(host, port);
@@ -34,6 +34,7 @@ public sealed class SmtpConnector(IConfiguration configuration) : IConnector
         {
             IsBodyHtml = true,
             Body = body,
+            BodyEncoding = System.Text.Encoding.UTF8,
             From = new MailAddress(sender),
             Priority = MailPriority.High,
             Subject = subject
@@ -45,6 +46,5 @@ public sealed class SmtpConnector(IConfiguration configuration) : IConnector
         }
 
         await client.SendMailAsync(message, cancellationToken);
-        return true;
     }
 }

@@ -4,7 +4,7 @@
       "commandName": "Project",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development",
-        "Elastic__Url": "https://localhost:53809",
+        "Elastic__Url": "https://mdm-dev.seas.local:30443/elasticsearch",
         "Elastic__UserName": "alerting",
         "Elastic__Password": "jNrDW_C9i2jHzC-",
         "Elastic__Certificate": "",

@@ -32,7 +32,7 @@ public class Worker(ILogger<Worker> logger, IAlertRepository alertRepository, Co
                 {
                     logger.LogInformation("Alert status changed from {currentStatus} to {newStatus}",
                         currentAlert.ExecutionStatus.Status, alert.ExecutionStatus.Status);
-                    await SendAlerts(alert);
+                    await SendAlerts(alert, stoppingToken);
                     currentAlerts.Remove(currentAlert);
                     currentAlerts.Add(alert);
                 }
@@ -49,8 +49,16 @@ public class Worker(ILogger<Worker> logger, IAlertRepository alertRepository, Co
 
             foreach (var connector in connectors)
             {
-                var connectorImpl = connectorFactory.Create(connector);
-                var result = await connectorImpl.TrySend(alert, configuration.GetSection($"Groups:{tag}:Connectors:{connector}"), cancellationToken);
+                try
+                {
+                    var connectorImpl = connectorFactory.Create(connector);
+                    await connectorImpl.Send(alert, configuration.GetSection($"Groups:{tag}:Connectors:{connector}"), cancellationToken);
+                }
+                catch (Exception e)
+                {
+                    logger.LogError(e, "Unable to send alert via connector {ConnectorName}. Exception was: {ExceptionMsg}", connector, e.Message);
+                    throw;
+                }
             }
         }
     }

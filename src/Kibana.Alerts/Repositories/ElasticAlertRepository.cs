@@ -30,7 +30,7 @@ internal class ElasticAlertRepository(ElasticsearchClient client, IConfiguration
     {
         var publicUrl = configuration["Elastic:PublicUrl"];
         if (publicUrl.EndsWith('/'))
-            publicUrl = publicUrl.Substring(0, publicUrl.Length - 1);
+            publicUrl = publicUrl[..^1];
 
         var response = await client.SearchAsync<Document>(s => s
             .Index(Extensions.IndexName)

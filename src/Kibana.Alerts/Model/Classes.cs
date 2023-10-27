@@ -19,9 +19,9 @@ public class ExecutionStatus
 public class Params
 {
     [JsonPropertyName("threshold")]
-    public string? Threshold { get; set; }
+    public decimal? Threshold { get; set; }
     [JsonPropertyName("windowSize")]
-    public string? WindowSize { get; set; }
+    public decimal? WindowSize { get; set; }
     [JsonPropertyName("windowUnit")]
     public string? WindowUnit { get; set; }
     [JsonPropertyName("environment")]
