@@ -1,13 +1,13 @@
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
+ARG TARGETARCH
+WORKDIR /source
+
+COPY . .
+RUN dotnet publish -a $TARGETARCH -o /app --self-contained /p:PublishTrimmed=true /p:PublishReadyToRun=true /p:PublishSingleFile=true
+
+# final stage/image
+FROM mcr.microsoft.com/dotnet/runtime-deps:8.0-alpine
 WORKDIR /app
-COPY ["/app", "/app"]
-ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
-RUN apk add --no-cache icu-libs krb5-libs libgcc libintl libssl1.1 libstdc++ zlib tzdata
-
-ENV APP_UID=10000
-ENV APP_NAME=appuser
-
-RUN adduser -u $APP_UID --disabled-password $APP_NAME
+COPY --from=build /app .
 USER $APP_UID
-CMD ["./Kibana.Alerts"]
-# ENTRYPOINT ["dotnet", "Kibana.Alerts.dll"] 
+ENTRYPOINT ["./Kibana.Alerts"]
