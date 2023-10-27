@@ -1,7 +1,5 @@
 # thrifty-elastic-alerting
-Are you financially challenged, skint, or just hilariously frugal to purchase an Elastic license? 
-Still, you're desperately yearning for those snazzy Kibana alerting features? 
-Well, look no further because this repository has got your penny-pinching back!
+Are you financially challenged, skint, or just to cheep to purchase an Elastic license? Still, you're desperately yearning for those snazzy Kibana alerting features? Well, look no further because this repository has got your penny-pinching back!
 
 ## Quick start guide
 
