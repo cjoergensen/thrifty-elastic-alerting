@@ -25,7 +25,41 @@ public static class Extensions
         services.AddSingleton(new ElasticClient(settings));
         services.AddSingleton<IAlertRepository, ElasticAlertRepository>();
     }
+}
+public class SourceContextSerializer : Serializer
+{
+    private JsonSerializerOptions options;
+    private JsonSerializerOptions sourceGenOptions;
 
+    public SourceContextSerializer(IElasticsearchClientSettings settings) : base()
+    {
+        sourceGenOptions = new JsonSerializerOptions
+        {
+            TypeInfoResolver = DocumentContext.Default
+        };
+    }
+
+    public override object Deserialize(Type type, Stream stream) =>
+        JsonSerializer.Deserialize(stream, type, sourceGenOptions);
+
+    public override T Deserialize<T>(Stream stream) =>
+        JsonSerializer.Deserialize<T>(stream, sourceGenOptions);
+
+    public override async ValueTask<object> DeserializeAsync(Type type, Stream stream, CancellationToken cancellationToken = default) =>
+        await JsonSerializer.DeserializeAsync(stream, type, sourceGenOptions, cancellationToken);
+
+    public override async ValueTask<T> DeserializeAsync<T>(Stream stream, CancellationToken cancellationToken = default) =>
+        await JsonSerializer.DeserializeAsync<T>(stream, sourceGenOptions, cancellationToken);
+
+    public override void Serialize<T>(T data, Stream stream, Elastic.Transport.SerializationFormatting formatting = Elastic.Transport.SerializationFormatting.None)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override Task SerializeAsync<T>(T data, Stream stream, Elastic.Transport.SerializationFormatting formatting = Elastic.Transport.SerializationFormatting.None, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
 }
 internal class ElasticAlertRepository(ElasticClient client, IConfiguration configuration) : IAlertRepository
 {
