@@ -27,7 +27,7 @@ public sealed class MsTeamsConnector(IConfiguration configuration, HttpClient ht
         },
         {
           "type": "TextBlock",
-          "text": "The alert '{{Name}}' has changed status change to '{{ExecutionStatus.Status}}'.",
+          "text": "The alert '{{Name}}' has changed status to '{{ExecutionStatus.Status}}'.",
           "wrap": true
         }
       ],

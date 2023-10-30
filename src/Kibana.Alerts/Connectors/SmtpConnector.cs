@@ -7,8 +7,7 @@ public class SmtpSettings
 {
     public string Subject { get; set; }
     public string Body { get; set; }
-    public string Sender { get; set; }
-    public List<string> Audience {  get; set; }
+    public List<string> Recipients {  get; set; }
 }
 public sealed class SmtpConnector(IConfiguration configuration, IHandlebars handlebars) : IConnector
 {
@@ -54,7 +53,7 @@ public sealed class SmtpConnector(IConfiguration configuration, IHandlebars hand
             Subject = subject
         };
 
-        foreach (var recipient in settings.Audience)
+        foreach (var recipient in settings.Recipients)
         {
             message.Bcc.Add(recipient);
         }

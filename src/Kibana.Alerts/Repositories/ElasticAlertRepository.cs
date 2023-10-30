@@ -50,7 +50,7 @@ internal class ElasticAlertRepository(ElasticClient client, IConfiguration confi
 {
     public async Task<IEnumerable<Alert>> GetAll()
     {
-        var publicUrl = configuration["Elastic:PublicUrl"];
+        var publicUrl = configuration["Elastic:KibanaUrl"];
         if (publicUrl.EndsWith('/'))
             publicUrl = publicUrl[..^1];
 
