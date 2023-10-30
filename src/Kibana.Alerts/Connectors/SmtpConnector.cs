@@ -12,7 +12,7 @@ public class SmtpSettings
 public sealed class SmtpConnector(IConfiguration configuration, IHandlebars handlebars) : IConnector
 {
     private readonly IConfiguration configuration = configuration;
-    private const string DefaultSubjectTemplate = "Important Update: {{Name}} is now: {{ExecutionStatus.Status}}";
+    private const string DefaultSubjectTemplate = "Important Update: {{Name}} is now {{ExecutionStatus.Status}}";
     private const string DefaultBodyTemplate = """
     <html>
       <body>
