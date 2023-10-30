@@ -1,7 +1,14 @@
-﻿using HandlebarsDotNet.ValueProviders;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Kibana.Alerts.Model;
+
+//[JsonSerializable(typeof(Alert))]
+//[JsonSerializable(typeof(Params))]
+//[JsonSerializable(typeof(ExecutionStatus))]
+[JsonSerializable(typeof(Document))]
+public partial class DocumentContext : JsonSerializerContext
+{
+}
 
 public class ExecutionStatus
 {
