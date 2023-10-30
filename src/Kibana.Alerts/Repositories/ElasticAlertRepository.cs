@@ -14,7 +14,14 @@ public static class Extensions
     public const string IndexName = ".kibana_alerting_cases";
     public static void AddElasticClient(this IServiceCollection services, IConfiguration configuration)
     {
-        var settings = new ElasticsearchClientSettings(new Uri(configuration["Elastic:Url"]))
+        if (string.IsNullOrWhiteSpace(configuration["Elastic:PublicUrl"]))
+            throw new Exception("Environment variable Elastic__PublicUrl was not specified");
+        if (string.IsNullOrWhiteSpace(configuration["Elastic:UserName"]))
+            throw new Exception("Environment variable Elastic__UserName was not specified");
+        if (string.IsNullOrWhiteSpace(configuration["Elastic:Password"]))
+            throw new Exception("Environment variable Elastic__Password was not specified");
+
+        var settings = new ElasticsearchClientSettings(new Uri(configuration["Elastic:PublicUrl"]))
             .DefaultMappingFor<Document>(c => c.IndexName(IndexName))
             .Authentication(new BasicAuthentication(configuration["Elastic:UserName"], configuration["Elastic:Password"]));
         
