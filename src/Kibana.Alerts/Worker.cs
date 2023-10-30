@@ -6,7 +6,7 @@ namespace Kibana.Alerts;
 
 public class Worker(ILogger<Worker> logger, IAlertRepository alertRepository, ConnectorFactory connectorFactory, IConfiguration configuration) : BackgroundService
 {
-    private List<Alert> currentAlerts;
+    private List<Alert> currentAlerts = [];
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

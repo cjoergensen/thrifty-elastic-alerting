@@ -2,14 +2,6 @@
 
 namespace Kibana.Alerts.Model;
 
-//[JsonSerializable(typeof(Alert))]
-//[JsonSerializable(typeof(Params))]
-//[JsonSerializable(typeof(ExecutionStatus))]
-[JsonSerializable(typeof(Document))]
-public partial class DocumentContext : JsonSerializerContext
-{
-}
-
 public class ExecutionStatus
 {
     [JsonPropertyName("status")]
@@ -67,4 +59,9 @@ public class Document
     public string Type { get; set; }
     [JsonPropertyName("alert")]
     public Alert Alert { get; set; }
+}
+
+[JsonSerializable(typeof(Document))]
+public partial class DocumentContext : JsonSerializerContext
+{
 }
