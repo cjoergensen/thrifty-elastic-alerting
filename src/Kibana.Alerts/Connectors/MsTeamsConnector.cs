@@ -22,11 +22,11 @@ public sealed class MsTeamsConnector(IConfiguration configuration, HttpClient ht
           "type": "TextBlock",
           "size": "Medium",
           "weight": "Bolder",
-          "text": "⚠ Alert Status Update - {{Name}} has changed state to: {{ExecutionStatus.Status}} ⚠"
+          "text": "🚨 Alert Status Update - **{{Name}}** has changed state to: **{{ExecutionStatus.Status}}**"
         },
         {
           "type": "TextBlock",
-          "text": "There has been a change in the status of alert "<strong>{{Name}}</strong>." It is now <strong>{{ExecutionStatus.Status}}</strong>.</p><p>For detailed information regarding this alert's status change, please click the view details button.",
+          "text": "There has been a change in the status of alert '**{{Name}}**'. It is now '**{{ExecutionStatus.Status}}**'. For detailed information regarding this alert's status change, please click the view details button.",
           "wrap": true
         }
       ],
