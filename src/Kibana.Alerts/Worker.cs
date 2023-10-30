@@ -42,7 +42,7 @@ public class Worker(ILogger<Worker> logger, IAlertRepository alertRepository, Co
         foreach (var tag in alert.Tags)
         {
             var connectors = configuration.GetSection($"Groups:{tag}:Connectors").GetChildren().ToDictionary(x => x.Key, null).Keys.ToList();
-            if (!connectors.Any())
+            if (connectors.Count == 0)
             {
                 logger.LogWarning("Tag {tag} on alert {alertName} not mapped to any groups in groups.json", tag, alert.Name);
                 continue;
