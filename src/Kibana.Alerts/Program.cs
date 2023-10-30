@@ -4,8 +4,8 @@ using Kibana.Alerts.Connectors;
 using Kibana.Alerts.Repositories;
 
 var builder = Host.CreateApplicationBuilder(args);
-builder.Configuration.AddJsonFile("internalgroups.json", optional: false, reloadOnChange: false);
-builder.Configuration.AddJsonFile("/groups.json", optional: true, reloadOnChange: false);
+builder.Configuration.AddJsonFile("/groups.json", optional: true, reloadOnChange: true);
+builder.Configuration.AddJsonFile("/connectors.json", optional: true, reloadOnChange: true);
 builder.Services.AddHostedService<Worker>();
 
 
