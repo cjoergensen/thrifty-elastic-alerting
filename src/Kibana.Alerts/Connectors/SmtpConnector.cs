@@ -29,9 +29,9 @@ public sealed class SmtpConnector(IConfiguration configuration, IHandlebars hand
 
     public async Task Send(Alert alert, IConfigurationSection configurationSection, CancellationToken cancellationToken = default)
     {
-        var port = int.Parse(configuration["Smtp:Port"]);
-        var host = configuration["Smtp:Host"];
-        var sender = configuration["Smtp:Sender"];
+        var port = int.Parse(configuration["SmtpServer:Port"]);
+        var host = configuration["SmtpServer:Host"];
+        var sender = configuration["SmtpServer:Sender"];
 
         var settings = new SmtpSettings();
         configurationSection.Bind(settings);

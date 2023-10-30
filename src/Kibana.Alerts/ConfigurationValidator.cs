@@ -60,7 +60,7 @@ public static class ConfigurationValidator
     {
         if (!connectorsSection.GetSection("Smtp").Exists() && !connectorsSection.GetSection("MsTeams").Exists())
         {
-            throw new Exception($"For Group '{groupName}', at least one connector of type 'Smtp' or 'MsTeams' is required.");
+            throw new Exception($"Group '{groupName}' needs at least one connector of type 'Smtp' or 'MsTeams'.");
         }
     }
 
