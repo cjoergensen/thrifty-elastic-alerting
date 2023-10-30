@@ -6,7 +6,7 @@
         "DOTNET_ENVIRONMENT": "Development",
         "Elastic__Url": "https://mdm-dev.seas.local:30443/elasticsearch",
         "Elastic__UserName": "alerting",
-        "Elastic__Password": "jNrDW_C9i2jHzC-",
+        "Elastic__Password": "4436bXatopl20R5o18xm0irF",
         "Elastic__Certificate": "",
         "Elastic__PublicUrl": "https://mdm-dev.seas.local:30443/kibana/"
       },
