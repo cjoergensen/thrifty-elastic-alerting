@@ -13,8 +13,19 @@ public class SmtpSettings
 public sealed class SmtpConnector(IConfiguration configuration, IHandlebars handlebars) : IConnector
 {
     private readonly IConfiguration configuration = configuration;
-    private const string DefaultSubjectTemplate = "⚠ Alert Status Update - {{Name}} has changed state to: {{ExecutionStatus.Status}} ⚠";
-    private const string DefaultBodyTemplate = "<html><body><p>There has been a change in the status of alert \"<strong>{{Name}}</strong>.\" It is now <strong>{{ExecutionStatus.Status}}</strong>.</p><p>For detailed information regarding this alert's status change, please follow this <a href=\"{{RuleUrl}}\">link</a>.</p></body></html>";
+    private const string DefaultSubjectTemplate = "Important Update: {{Name}} is now: {{ExecutionStatus.Status}}";
+    private const string DefaultBodyTemplate = """
+    <html>
+      <body>
+        <p>
+          Important Update: The alert "<strong>{{Name}}</strong>" has change status to <strong>{{ExecutionStatus.Status}}</strong>.
+        </p>
+        <p>
+          For comprehensive details regarding this alert's status modification, please access the information through this <a href="{{RuleUrl}}">link</a>.
+        </p>
+      </body>
+    </html>
+    """;
     
 
     public async Task Send(Alert alert, IConfigurationSection configurationSection, CancellationToken cancellationToken = default)

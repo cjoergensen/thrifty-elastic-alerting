@@ -16,29 +16,28 @@ public sealed class MsTeamsConnector(IConfiguration configuration, HttpClient ht
     private const string MediaType = "application/json";
     private const string DefaultMessageCardJson = """
     {
+      "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
       "type": "AdaptiveCard",
+      "version": "1.6",
       "body": [
         {
           "type": "TextBlock",
-          "size": "Medium",
           "weight": "Bolder",
-          "text": "🚨 Alert Status Update - **{{Name}}** has changed state to: **{{ExecutionStatus.Status}}**"
+          "text": "Important Update"
         },
         {
           "type": "TextBlock",
-          "text": "There has been a change in the status of alert '**{{Name}}**'. It is now '**{{ExecutionStatus.Status}}**'. For detailed information regarding this alert's status change, please click the view details button.",
+          "text": "The alert '{{Name}}' has changed status change to '{{ExecutionStatus.Status}}'.",
           "wrap": true
         }
       ],
       "actions": [
         {
           "type": "Action.OpenUrl",
-          "title": "View details",
+          "title": "View Details",
           "url": "{{RuleUrl}}"
         }
-      ],
-      "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-      "version": "1.6"
+      ]
     }
     """;
 
