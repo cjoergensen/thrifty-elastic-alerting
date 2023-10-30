@@ -13,5 +13,6 @@
     <PackageReference Include="Handlebars.Net" Version="2.1.4" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0-rc.1.23419.4" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
+    <PackageReference Include="NEST" Version="7.17.5" />
   </ItemGroup>
 </Project>

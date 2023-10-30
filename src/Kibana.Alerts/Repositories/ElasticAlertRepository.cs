@@ -1,7 +1,7 @@
 ﻿using Kibana.Alerts.Model;
 using Elastic.Clients.Elasticsearch;
 using Elastic.Transport;
-using System.Linq;
+using System.Text.Json;
 
 namespace Kibana.Alerts.Repositories;
 public interface IAlertRepository
@@ -21,15 +21,50 @@ public static class Extensions
         if (string.IsNullOrWhiteSpace(configuration["Elastic:Password"]))
             throw new Exception("Environment variable Elastic__Password was not specified");
 
-        var settings = new ElasticsearchClientSettings(new Uri(configuration["Elastic:PublicUrl"]))
+        var pool = new StaticNodePool(new Uri[] { new Uri(configuration["Elastic:PublicUrl"]) });
+        var settings = new ElasticsearchClientSettings(nodePool: pool, sourceSerializer: (x,y) => new SourceContextSerializer(y))
             .DefaultMappingFor<Document>(c => c.IndexName(IndexName))
             .Authentication(new BasicAuthentication(configuration["Elastic:UserName"], configuration["Elastic:Password"]));
         
-        settings.ServerCertificateValidationCallback(CertificateValidations.AllowAll);
+        settings.ServerCertificateValidationCallback(Elasticsearch.Net.CertificateValidations.AllowAll);
         services.AddSingleton(new ElasticsearchClient(settings));
         services.AddSingleton<IAlertRepository, ElasticAlertRepository>();
     }
+}
+public class SourceContextSerializer : Serializer
+{
+    private JsonSerializerOptions options;
+    private JsonSerializerOptions sourceGenOptions;
 
+    public SourceContextSerializer(IElasticsearchClientSettings settings) : base()
+    {
+        sourceGenOptions = new JsonSerializerOptions
+        {
+            TypeInfoResolver = DocumentContext.Default
+        };
+    }
+
+    public override object Deserialize(Type type, Stream stream) =>
+        JsonSerializer.Deserialize(stream, type, sourceGenOptions);
+
+    public override T Deserialize<T>(Stream stream) =>
+        JsonSerializer.Deserialize<T>(stream, sourceGenOptions);
+
+    public override async ValueTask<object> DeserializeAsync(Type type, Stream stream, CancellationToken cancellationToken = default) =>
+        await JsonSerializer.DeserializeAsync(stream, type, sourceGenOptions, cancellationToken);
+
+    public override async ValueTask<T> DeserializeAsync<T>(Stream stream, CancellationToken cancellationToken = default) =>
+        await JsonSerializer.DeserializeAsync<T>(stream, sourceGenOptions, cancellationToken);
+
+    public override void Serialize<T>(T data, Stream stream, Elastic.Transport.SerializationFormatting formatting = Elastic.Transport.SerializationFormatting.None)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override Task SerializeAsync<T>(T data, Stream stream, Elastic.Transport.SerializationFormatting formatting = Elastic.Transport.SerializationFormatting.None, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
 }
 internal class ElasticAlertRepository(ElasticsearchClient client, IConfiguration configuration) : IAlertRepository
 {
