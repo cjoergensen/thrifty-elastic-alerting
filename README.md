@@ -19,7 +19,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: elasticsearch-es-alerting-user
-  namespace: elasticsearch # Change this to match your deployed ECK stack namespace
+  namespace: elastic # Change this to match your deployed ECK stack namespace
 type: kubernetes.io/basic-auth
 stringData:
   username: alerting
@@ -30,7 +30,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: groups-json-configmap
-  namespace: elasticsearch # Change this to match your deployed ECK stack namespace
+  namespace: elastic # Change this to match your deployed ECK stack namespace
 data:
   groups.json: |
     {
@@ -48,12 +48,20 @@ data:
         }
       }
     }
+  connectors.json: |
+    {
+      "Smtp": {
+        "Sender": "noreply@thrifty-stuff.com",
+        "Host": "smtp.somedomain.com",
+        "Port": 25
+      }
+    }
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: thrifty-elastic-alerting-deployment
-  namespace: elasticsearch # Change this to match your deployed ECK stack namespace
+  namespace: elastic # Change this to match your deployed ECK stack namespace
 spec:
   selector:
     matchLabels:
@@ -71,7 +79,7 @@ spec:
       containers:
       - name:  thrifty-elastic-alerting
         imagePullPolicy: Always
-        image: cjoergensen/thrifty-elastic-alerting:latest
+        image: cjoergensendk/thrifty-elastic-alerting:latest
         volumeMounts:
         - name: elastic-cert
           mountPath: /etc/ssl/certs/elastic.crt
@@ -87,6 +95,8 @@ spec:
         env:
         - name: Elastic__Url
           value: 'https://elasticsearch-es-internal-http:9200'
+        - name: Elastic__PublicUrl
+          value: 'https://mdm-dev.seas.local:30443/kibana/'
         - name: Elastic__UserName
           valueFrom:
             secretKeyRef:
@@ -106,8 +116,9 @@ spec:
 
 ## To do's
 What is still needed
-	* Documentation of docker settings
-    * How to tag an alert in kibana and add the tag to a group in groups.json
-	* Build script
-	* Deploy script to Docker Hub
+ * Documentation of docker settings
+ * How to tag an alert in kibana and add the tag to a group in groups.json
+ * Build script
+ * Deploy script to Docker Hub
+
 
