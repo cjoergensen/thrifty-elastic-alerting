@@ -30,8 +30,7 @@ public class SourceGenSerializer : IElasticsearchSerializer
 {
     private readonly JsonSerializerOptions options = new()
     {
-            TypeInfoResolver = DocumentContext.Default,
-            For
+            TypeInfoResolver = DocumentContext.Default
     };
 
     public object Deserialize(Type type, Stream stream) => JsonSerializer.Deserialize(stream, type, options);
