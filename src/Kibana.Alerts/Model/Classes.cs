@@ -61,3 +61,8 @@ public class Document
     [JsonPropertyName("alert")]
     public Alert Alert { get; set; }
 }
+
+[JsonSerializable(typeof(Document))]
+public partial class DocumentContext : JsonSerializerContext
+{
+}
