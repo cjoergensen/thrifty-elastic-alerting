@@ -6,6 +6,8 @@ on:
   workflow_dispatch:
 env:
   DOTNET_NOLOGO: true
+  imageRepository: "cjoergensendk/thrifty-elastic-alerting"
+
 jobs:
   release:
     runs-on: ubuntu-latest
