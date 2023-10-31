@@ -50,21 +50,29 @@ internal class ElasticAlertRepository(ElasticClient client, IConfiguration confi
 {
     public async Task<IEnumerable<Alert>> GetAll()
     {
-        var publicUrl = configuration["Elastic:KibanaUrl"];
-        if (publicUrl.EndsWith('/'))
-            publicUrl = publicUrl[..^1];
+        var kibanaUrl = configuration["Elastic:KibanaUrl"];
+        ArgumentException.ThrowIfNullOrWhiteSpace(kibanaUrl, nameof(kibanaUrl));
+
+        if (kibanaUrl.EndsWith('/'))
+            kibanaUrl = kibanaUrl[..^1];
 
         var response = await client.SearchAsync<Document>(s => s
             .Index(Extensions.IndexName)
             .From(0)
             .Size(1000)
-            .Query(q => q.Term(p => p.Type, "alert")));
+            .Query(q => q
+                .Bool(b => b
+                    .Should(
+                        bs => bs.Term(p => p.Type, "alert")
+                    )
+                )
+            ));
 
         return response.Hits.Select(h =>
         {
             h.Source.Alert.Id = h.Id;
 
-            var url = publicUrl + "/app/observability/alerts/rules/" + h.Id.Replace("alert:", "");
+            var url = kibanaUrl + "/app/observability/alerts/rules/" + h.Id.Replace("alert:", "");
             var uri = new Uri(url);
             h.Source.Alert.RuleUrl = uri.ToString();
             return h.Source.Alert;

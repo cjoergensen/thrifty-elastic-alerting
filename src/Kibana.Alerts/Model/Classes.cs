@@ -10,8 +10,8 @@ public class ExecutionStatus
     public DateTimeOffset LastExecutionDate { get; set; }
     [JsonPropertyName("lastDuration")]
     public long LastDurationMs { get; set; }
-    [JsonPropertyName("error")]
-    public string? Error { get; set; }
+    //[JsonPropertyName("error")]
+    //public string? Error { get; set; }
     [JsonPropertyName("warning")]
     public string? Warning { get; set; }
 }
@@ -45,7 +45,7 @@ public class Alert
     public string AlertType { get; set; }
 
     [JsonPropertyName("tags")]
-    public List<string> Tags { get; set; }
+    public List<string> Tags { get; set; } = [];
     [JsonPropertyName("executionStatus")]
     public ExecutionStatus ExecutionStatus { get; set; }
     [JsonPropertyName("params")]
