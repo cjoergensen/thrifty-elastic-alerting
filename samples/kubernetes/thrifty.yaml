@@ -1,0 +1,110 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: elasticsearch-es-alerting-user
+  namespace: elastic # Change this to match your deployed ECK stack namespace
+type: kubernetes.io/basic-auth
+stringData:
+  username: alerting
+  password: A13rt1n9 # Change this please!
+  roles: kibana_system
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: groups-json-configmap
+  namespace: elastic # Change this to match your deployed ECK stack namespace
+data:
+  groups.json: |
+    {
+      "Groups": {
+        "DevTeam": {
+          "Connectors": {
+            "Smtp" : {
+              "Subject": "Some delicious subject {alert.name}",
+              "Body": "Some body for the email being sent out with substitutions like this one {alert.ExecutionStatus.Status}",
+              "Audience": [
+                "mail@nowhere-to-run.com"
+              ]
+            },
+            "MsTeams": {
+              "WebHookUrl": "https://seasnve.webhook.office.com/webhookb2/your-unique-ids-for-your-teams-channel-should-go-here"
+            }            
+          }
+        }
+      }
+    }
+  connectors.json: |
+    {
+      "Smtp": {
+        "Sender": "noreply@thrifty-stuff.com",
+        "Host": "smtp.somedomain.com",
+        "Port": 25
+      }
+    } 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: thrifty-elastic-alerting-deployment
+  namespace: elastic # Change this to match your deployed ECK stack namespace
+spec:
+  selector:
+    matchLabels:
+      app:  thrifty-elastic-alerting
+  template:
+    metadata:
+      labels:
+        app:  thrifty-elastic-alerting
+    spec:
+      volumes:
+      - name: elastic-cert
+        secret:
+          secretName: 'elasticsearch-es-http-certs-public'
+          optional: true
+      - name: thrifty-elastic-alerting-settings
+        configMap:
+          name: thrifty-elastic-alerting
+          optional: false              
+      containers:
+      - name:  thrifty-elastic-alerting
+        imagePullPolicy: Always
+        image: cjoergensendk/thrifty-elastic-alerting:latest
+        volumeMounts:
+        - name: elastic-cert
+          mountPath: /etc/ssl/certs/elastic.crt
+          subPath: tls.crt
+          readOnly: false
+        - name: thrifty-elastic-alerting-settings
+          mountPath: ./app/groups.json
+          subPath: groups.json
+          readOnly: false           
+        - name: thrifty-elastic-alerting-settings
+          mountPath: ./app/connectors.json
+          subPath: connectors.json
+          readOnly: false               
+        resources:
+          requests:
+            memory: 250Mi
+            cpu: 250m
+          limits:
+            memory: 500Mi
+            cpu: 500m 
+        env:
+        - name: Elastic__Url
+          value: 'https://elasticsearch-es-internal-http:9200'
+        - name: Elastic__KibanaUrl
+          value: 'https://the-public-facing/kibana-url/'
+        - name: Elastic__UserName
+          valueFrom:
+            secretKeyRef:
+              name: elasticsearch-es-alerting-user
+              key: username
+              optional: false
+        - name: Elastic__Password
+          valueFrom:
+            secretKeyRef:
+              name: elasticsearch-es-alerting-user
+              key: password
+              optional: false
