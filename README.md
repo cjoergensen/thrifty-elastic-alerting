@@ -120,5 +120,6 @@ What is still needed
  * How to tag an alert in kibana and add the tag to a group in groups.json
  * Build script
  * Deploy script to Docker Hub
+ * Kubectl command pointing to latest release depoyment.yaml
 
 
