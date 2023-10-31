@@ -4,7 +4,7 @@ on:
     inputs:
       version:
         description: 'Version'
-        type: environment
+        type: string
         required: true 
 env:
   DOTNET_NOLOGO: true
