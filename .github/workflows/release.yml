@@ -33,3 +33,9 @@ jobs:
       run: |
           docker tag ${{env.imageRepository}}:${{ github.ref_name }} ${{env.imageRepository}}:latest
           docker push --all-tags ${{env.imageRepository}}
+
+    - name: Publish artifacts
+      uses: actions/upload-artifact@v3.1.3
+      with:
+        name: k8s-deployments
+        path: samples/kubernetes/*
