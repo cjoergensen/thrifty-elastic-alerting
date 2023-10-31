@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Extensions.Configuration;
+﻿namespace Kibana.Alerts;
 
 public static class ConfigurationValidator
 {
@@ -67,15 +66,14 @@ public static class ConfigurationValidator
     private static void ValidateSmtpConnector(IConfiguration connectorsSection, IConfiguration configuration, string groupName)
     {
         var smtpRecipients = connectorsSection.GetSection("Smtp:Recipients").Get<string[]>();
-        if (connectorsSection.GetSection("Smtp").Exists() )
+        if (connectorsSection.GetSection("Smtp").Exists())
         {
-            if((smtpRecipients == null || smtpRecipients.Length == 0))
+            if (smtpRecipients == null || smtpRecipients.Length == 0)
             {
                 throw new Exception($"For Group '{groupName}', the 'Smtp' connector requires a recipients array with one or more items.");
             }
 
             var smtpServer = configuration.GetSection("SmtpServer");
-
             if (!smtpServer.Exists())
             {
                 throw new Exception($"Group '{groupName}' is using the 'Smtp' connector, but no SmtpServer settings are present (or empty) in the configuration.");
@@ -89,17 +87,12 @@ public static class ConfigurationValidator
             {
                 throw new Exception($"Invalid 'SmtpServer' settings. 'Sender', 'Host', and 'Port' are required.");
             }
-
         }
     }
 
     private static void ValidateMsTeamsConnector(IConfiguration connectorsSection, string groupName)
     {
-        var smtpRecipients = connectorsSection.GetSection("Smtp:Recipients").Get<string[]>();
         var teamsWebHookUrl = connectorsSection.GetSection("MsTeams:WebHookUrl").Value;
-
-        
-
         if (connectorsSection.GetSection("MsTeams").Exists() && string.IsNullOrWhiteSpace(teamsWebHookUrl))
         {
             throw new Exception($"For Group '{groupName}', the 'MsTeams' connector requires a WebHookUrl.");

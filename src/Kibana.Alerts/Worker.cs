@@ -18,16 +18,14 @@ public class Worker(ILogger<Worker> logger, IAlertRepository alertRepository, Co
             {
                 var currentAlert = currentAlerts.SingleOrDefault(x => x.Id == alert.Id);
                 if (currentAlert == null) {
-                    logger.LogInformation("Alert added with status {status}",
-                        alert.ExecutionStatus.Status);
+                    logger.LogInformation("Alert added with status {status}", alert.ExecutionStatus.Status);
                     currentAlerts.Add(alert);
                     continue;
                 }
 
                 if (currentAlert.ExecutionStatus.Status != alert.ExecutionStatus.Status) 
                 {
-                    logger.LogInformation("Alert status changed from {currentStatus} to {newStatus}",
-                        currentAlert.ExecutionStatus.Status, alert.ExecutionStatus.Status);
+                    logger.LogInformation("Alert status changed from {currentStatus} to {newStatus}", currentAlert.ExecutionStatus.Status, alert.ExecutionStatus.Status);
                     await SendAlerts(alert, stoppingToken);
                     currentAlerts.Remove(currentAlert);
                     currentAlerts.Add(alert);
@@ -47,6 +45,7 @@ public class Worker(ILogger<Worker> logger, IAlertRepository alertRepository, Co
                 logger.LogWarning("Tag {tag} on alert {alertName} not mapped to any groups in groups.json", tag, alert.Name);
                 continue;
             }
+
             foreach (var connector in connectors)
             {
                 try
@@ -57,7 +56,6 @@ public class Worker(ILogger<Worker> logger, IAlertRepository alertRepository, Co
                 catch (Exception e)
                 {
                     logger.LogError(e, "Unable to send alert via connector {ConnectorName}. Exception was: {ExceptionMsg}", connector, e.Message);
-                    throw;
                 }
             }
         }

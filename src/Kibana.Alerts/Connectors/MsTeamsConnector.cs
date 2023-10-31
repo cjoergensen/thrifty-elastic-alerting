@@ -64,7 +64,6 @@ public sealed class MsTeamsConnector(IConfiguration configuration, HttpClient ht
         }
         """;
 
-
         var content = new StringContent(message, System.Text.Encoding.UTF8, MediaType);
         var response = await httpClient.PostAsync(settings.WebHookUrl, content, cancellationToken);
         response.EnsureSuccessStatusCode();
