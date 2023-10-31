@@ -10,6 +10,8 @@ public class Worker(ILogger<Worker> logger, IAlertRepository alertRepository, Co
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        logger.LogInformation("Service operational, alerts are monitored.");
+
         currentAlerts = (await alertRepository.GetAll()).ToList();
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -17,7 +19,8 @@ public class Worker(ILogger<Worker> logger, IAlertRepository alertRepository, Co
             foreach (var alert in alerts)
             {
                 var currentAlert = currentAlerts.SingleOrDefault(x => x.Id == alert.Id);
-                if (currentAlert == null) {
+                if (currentAlert == null) 
+                {
                     logger.LogInformation("Alert added with status {status}", alert.ExecutionStatus.Status);
                     currentAlerts.Add(alert);
                     continue;
@@ -31,6 +34,7 @@ public class Worker(ILogger<Worker> logger, IAlertRepository alertRepository, Co
                     currentAlerts.Add(alert);
                 }
             }
+
             await Task.Delay(10000, stoppingToken);
         }
     }
@@ -50,12 +54,14 @@ public class Worker(ILogger<Worker> logger, IAlertRepository alertRepository, Co
             {
                 try
                 {
+                    logger.LogInformation("Sending alert: '{Alert} ({AlertId})' to group '{Group}' using '{Connector}'.", alert.Name, alert.Id, tag, connector);
+                    
                     var connectorImpl = connectorFactory.Create(connector);
                     await connectorImpl.Send(alert, configuration.GetSection($"Groups:{tag}:Connectors:{connector}"), cancellationToken);
                 }
                 catch (Exception e)
                 {
-                    logger.LogError(e, "Unable to send alert via connector {ConnectorName}. Exception was: {ExceptionMsg}", connector, e.Message);
+                    logger.LogError("Error when sending alert ''{Alert} ({AlertId})' to group '{Group}' using '{Connector}'. Exception was: {ExceptionMsg}", alert.Name, alert.Id, tag, connector, e.Message);
                 }
             }
         }
