@@ -31,5 +31,5 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     - name: "docker - tag and push"
       run: |
-          docker tag ${{env.imageRepository}}:${{ github.sha }} ${{env.imageRepository}}:latest
+          docker tag ${{env.imageRepository}}:${{ github.ref_name }} ${{env.imageRepository}}:latest
           docker push --all-tags ${{env.imageRepository}}
