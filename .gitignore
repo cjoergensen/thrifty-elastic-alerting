@@ -398,3 +398,4 @@ FodyWeavers.xsd
 *.sln.iml
 /src/Kibana.Alerts/Properties/launchSettings.json
 /src/appsettings.development.json
+/src/Kibana.Alerts/appsettings.development.json
