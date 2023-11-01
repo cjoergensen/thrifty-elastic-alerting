@@ -5,8 +5,8 @@ using System.Net.Http.Headers;
 namespace Kibana.Alerts.Connectors;
 public class MsTeamsSettings
 {
-    public string MessageCardJson { get; set; }
-    public string WebHookUrl { get; set; }
+    public string MessageCardJson { get; set; } = string.Empty;
+    public string? WebHookUrl { get; set; }
 }
 
 public sealed class MsTeamsConnector(IConfiguration configuration, HttpClient httpClient, IHandlebars handlebars) : IConnector
@@ -46,11 +46,12 @@ public sealed class MsTeamsConnector(IConfiguration configuration, HttpClient ht
         var settings = new MsTeamsSettings();
         configurationSection.Bind(settings);
 
+        ArgumentException.ThrowIfNullOrWhiteSpace(settings.WebHookUrl, nameof(settings.WebHookUrl));
+
         var cardTemplate = handlebars.Compile(settings.MessageCardJson ?? DefaultMessageCardJson);
         var card = cardTemplate(alert);
 
         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaType));
-
         string message = $$"""
         {
             "type": "message",

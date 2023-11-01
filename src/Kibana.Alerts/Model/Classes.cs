@@ -5,7 +5,7 @@ namespace Kibana.Alerts.Model;
 public class ExecutionStatus
 {
     [JsonPropertyName("status")]
-    public string Status { get; set; }
+    public string Status { get; set; } = "";
     [JsonPropertyName("lastExecutionDate")]
     public DateTimeOffset LastExecutionDate { get; set; }
     [JsonPropertyName("lastDuration")]
@@ -31,34 +31,35 @@ public class Params
 
 public class Alert
 {
-    public string Id { get; set; }
+    public string Id { get; set; } = "";
 
-    [JsonIgnore]    
-    public string RuleUrl { get; set; }
+    [JsonIgnore]
+    public string RuleUrl { get; set; } = "";
     [JsonPropertyName("enabled")]
     public bool Enabled { get; set; }
     [JsonPropertyName("running")]
     public bool Running { get; set; }
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    public string Name { get; set; } = "";
     [JsonPropertyName("alertTypeId")]
-    public string AlertType { get; set; }
+    public string AlertType { get; set; } = "";
 
     [JsonPropertyName("tags")]
     public List<string> Tags { get; set; } = [];
     [JsonPropertyName("executionStatus")]
-    public ExecutionStatus ExecutionStatus { get; set; }
+    public ExecutionStatus ExecutionStatus { get; set; } = new();
     [JsonPropertyName("params")]
-    public Params Params { get; set; }
+    public Params? Params { get; set; }
     [JsonPropertyName("nextRun")]
     public DateTimeOffset NextRun { get; set; }
 }
 public class Document
 {
     [JsonPropertyName("type")]
-    public string Type { get; set; }
+    public string Type { get; set; } = "";
+
     [JsonPropertyName("alert")]
-    public Alert Alert { get; set; }
+    public Alert Alert { get; set; } = new();
 }
 
 [JsonSerializable(typeof(Document))]

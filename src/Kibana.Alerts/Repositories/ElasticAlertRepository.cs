@@ -14,11 +14,19 @@ public static class Extensions
     public const string IndexName = ".kibana_alerting_cases";
     public static void AddElasticClient(this IServiceCollection services, IConfiguration configuration)
     {
-        var pool = new SingleNodeConnectionPool(new Uri(configuration["Elastic:Url"]));
+        var url = configuration["Elastic:Url"];
+        var username = configuration["Elastic:UserName"];
+        var password = configuration["Elastic:Password"];
+
+        ArgumentException.ThrowIfNullOrWhiteSpace(url, nameof(url));
+        ArgumentException.ThrowIfNullOrWhiteSpace(username, nameof(username));
+        ArgumentException.ThrowIfNullOrWhiteSpace(password, nameof(password));
+
+        var pool = new SingleNodeConnectionPool(new Uri(url));
         var settings = new ConnectionSettings(pool, sourceSerializer: (_, _) => new SourceGenSerializer())
             .DefaultIndex(IndexName)
             .ServerCertificateValidationCallback(CertificateValidations.AllowAll)
-            .BasicAuthentication(configuration["Elastic:UserName"], configuration["Elastic:Password"])
+            .BasicAuthentication(username, password)
             .ServerCertificateValidationCallback(CertificateValidations.AllowAll);
 
         services.AddSingleton(new ElasticClient(settings));
@@ -33,13 +41,21 @@ public class SourceGenSerializer : IElasticsearchSerializer
             TypeInfoResolver = DocumentContext.Default
     };
 
-    public object Deserialize(Type type, Stream stream) => JsonSerializer.Deserialize(stream, type, options);
+    public object Deserialize(Type type, Stream stream) => JsonSerializer.Deserialize(stream, type, options) ?? throw new Exception("Unable to deserialize stream");
 
-    public T Deserialize<T>(Stream stream) => JsonSerializer.Deserialize<T>(stream, options);
+    public T Deserialize<T>(Stream stream) => JsonSerializer.Deserialize<T>(stream, options) ?? throw new Exception("Unable to deserialize stream");
 
-    public Task<object> DeserializeAsync(Type type, Stream stream, CancellationToken cancellationToken = default) => JsonSerializer.DeserializeAsync(stream, type, options, cancellationToken).AsTask();
+    public async Task<object> DeserializeAsync(Type type, Stream stream, CancellationToken cancellationToken = default)
+    {
+        var result = await JsonSerializer.DeserializeAsync(stream, type, options, cancellationToken);
+        return result ?? throw new Exception("Unable to deserialize stream");
+    }
 
-    public Task<T> DeserializeAsync<T>(Stream stream, CancellationToken cancellationToken = default) => JsonSerializer.DeserializeAsync<T>(stream, options, cancellationToken).AsTask();
+    public async Task<T> DeserializeAsync<T>(Stream stream, CancellationToken cancellationToken = default)
+    {
+        var result = await JsonSerializer.DeserializeAsync<T>(stream, options, cancellationToken);
+        return result ?? throw new Exception("Unable to deserialize stream");
+    }
 
     public void Serialize<T>(T data, Stream stream, SerializationFormatting formatting = SerializationFormatting.None) => JsonSerializer.Serialize<T>(stream, data, options);
 
