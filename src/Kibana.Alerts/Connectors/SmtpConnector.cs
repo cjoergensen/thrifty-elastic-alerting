@@ -1,13 +1,14 @@
-﻿using HandlebarsDotNet;
+﻿using Elasticsearch.Net;
+using HandlebarsDotNet;
 using Kibana.Alerts.Model;
 using System.Net.Mail;
 
 namespace Kibana.Alerts.Connectors;
 public class SmtpSettings
 {
-    public string Subject { get; set; }
-    public string Body { get; set; }
-    public List<string> Recipients {  get; set; }
+    public string? Subject { get; set; }
+    public string? Body { get; set; }
+    public List<string> Recipients { get; set; } = [];
 }
 public sealed class SmtpConnector(IConfiguration configuration, IHandlebars handlebars) : IConnector
 {
@@ -29,9 +30,16 @@ public sealed class SmtpConnector(IConfiguration configuration, IHandlebars hand
 
     public async Task Send(Alert alert, IConfigurationSection configurationSection, CancellationToken cancellationToken = default)
     {
-        var port = int.Parse(configuration["SmtpServer:Port"]);
+        if(int.TryParse(configuration["SmtpServer:Port"], out int port) == false)
+        {
+            port = 25;
+        }
+
         var host = configuration["SmtpServer:Host"];
         var sender = configuration["SmtpServer:Sender"];
+
+        ArgumentException.ThrowIfNullOrWhiteSpace(host);
+        ArgumentException.ThrowIfNullOrWhiteSpace(sender);
 
         var settings = new SmtpSettings();
         configurationSection.Bind(settings);
