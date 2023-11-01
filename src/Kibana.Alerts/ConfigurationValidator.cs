@@ -6,7 +6,7 @@ public static class ConfigurationValidator
     {
         if (configuration == null)
         {
-            throw new Exception("Configuration is null.");
+            throw new ConfigurationException("Configuration is null.");
         }
 
         EnsureElasticSectionIsValid(configuration);
@@ -18,7 +18,7 @@ public static class ConfigurationValidator
             var connectorsSection = group.GetSection("Connectors");
             if (!connectorsSection.Exists())
             {
-                throw new Exception($"Group '{groupName}' is missing the 'Connectors' section or it is empty.");
+                throw new ConfigurationException($"Group '{groupName}' is missing the 'Connectors' section or it is empty.");
             }
 
             EnsureAtLeastOneConnectorType(connectorsSection, groupName);
@@ -32,7 +32,7 @@ public static class ConfigurationValidator
         var groupsSection = configuration.GetSection("Groups");
         if (!groupsSection.Exists())
         {
-            throw new Exception("At least one groups needs to be present in configuration.");
+            throw new ConfigurationException("At least one groups needs to be present in configuration.");
         }
     }
 
@@ -41,7 +41,7 @@ public static class ConfigurationValidator
         var elasticSection = configuration.GetSection("Elastic");
         if (!elasticSection.Exists())
         {
-            throw new Exception($"Required 'Elastic' section is missing or empty. Section must contain 'Url', 'UserName', 'Password', and 'KibanaUrl'.");
+            throw new ConfigurationException($"Required 'Elastic' section is missing or empty. Section must contain 'Url', 'UserName', 'Password', and 'KibanaUrl'.");
         }
 
         var elasticUrl = elasticSection["Url"];
@@ -51,7 +51,7 @@ public static class ConfigurationValidator
 
         if (string.IsNullOrWhiteSpace(elasticUrl) || string.IsNullOrWhiteSpace(elasticUserName) || string.IsNullOrWhiteSpace(elasticPassword) || string.IsNullOrWhiteSpace(elasticKibanaUrl))
         {
-            throw new Exception($"'Elastic' section must contain 'Url', 'UserName', 'Password', and 'KibanaUrl'.");
+            throw new ConfigurationException($"'Elastic' section must contain 'Url', 'UserName', 'Password', and 'KibanaUrl'.");
         }
     }
 
@@ -59,7 +59,7 @@ public static class ConfigurationValidator
     {
         if (!connectorsSection.GetSection("Smtp").Exists() && !connectorsSection.GetSection("MsTeams").Exists())
         {
-            throw new Exception($"Group '{groupName}' needs at least one connector of type 'Smtp' or 'MsTeams'.");
+            throw new ConfigurationException($"Group '{groupName}' needs at least one connector of type 'Smtp' or 'MsTeams'.");
         }
     }
 
@@ -70,13 +70,13 @@ public static class ConfigurationValidator
         {
             if (smtpRecipients == null || smtpRecipients.Length == 0)
             {
-                throw new Exception($"For Group '{groupName}', the 'Smtp' connector requires a recipients array with one or more items.");
+                throw new ConfigurationException($"For Group '{groupName}', the 'Smtp' connector requires a recipients array with one or more items.");
             }
 
             var smtpServer = configuration.GetSection("SmtpServer");
             if (!smtpServer.Exists())
             {
-                throw new Exception($"Group '{groupName}' is using the 'Smtp' connector, but no SmtpServer settings are present (or empty) in the configuration.");
+                throw new ConfigurationException($"Group '{groupName}' is using the 'Smtp' connector, but no SmtpServer settings are present (or empty) in the configuration.");
             }
 
             var smtpSender = smtpServer["Sender"];
@@ -85,7 +85,7 @@ public static class ConfigurationValidator
 
             if (string.IsNullOrWhiteSpace(smtpSender) || string.IsNullOrWhiteSpace(smtpHost) || string.IsNullOrWhiteSpace(smtpPort))
             {
-                throw new Exception($"Invalid 'SmtpServer' settings. 'Sender', 'Host', and 'Port' are required.");
+                throw new ConfigurationException($"Invalid 'SmtpServer' settings. 'Sender', 'Host', and 'Port' are required.");
             }
         }
     }
@@ -95,7 +95,18 @@ public static class ConfigurationValidator
         var teamsWebHookUrl = connectorsSection.GetSection("MsTeams:WebHookUrl").Value;
         if (connectorsSection.GetSection("MsTeams").Exists() && string.IsNullOrWhiteSpace(teamsWebHookUrl))
         {
-            throw new Exception($"For Group '{groupName}', the 'MsTeams' connector requires a WebHookUrl.");
+            throw new ConfigurationException($"For Group '{groupName}', the 'MsTeams' connector requires a WebHookUrl.");
         }
     }
+}
+
+[System.Serializable]
+public class ConfigurationException : System.Exception
+{
+    public ConfigurationException() { }
+    public ConfigurationException(string message) : base($"Configuration Error: {message}") { }
+    public ConfigurationException(string message, System.Exception inner) : base($"Configuration Error: {message}", inner) { }
+    protected ConfigurationException(
+        System.Runtime.Serialization.SerializationInfo info,
+        System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
 }
