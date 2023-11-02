@@ -106,7 +106,4 @@ public class ConfigurationException : System.Exception
     public ConfigurationException() { }
     public ConfigurationException(string message) : base($"Configuration Error: {message}") { }
     public ConfigurationException(string message, System.Exception inner) : base($"Configuration Error: {message}", inner) { }
-    protected ConfigurationException(
-        System.Runtime.Serialization.SerializationInfo info,
-        System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
 }
