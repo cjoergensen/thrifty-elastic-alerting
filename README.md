@@ -3,6 +3,13 @@ Are you financially challenged, skint, or just to cheep to purchase an Elastic l
 
 ## Quick start guide
 
+Given you're already up and running with an Elastic stack, either using Elastic ECK or using a home backed docker compose setup (see [here for ECK](#ECK) or [here for Docker](#Docker)), the next step is to create a user that TEA will use to monitor alert changes in an index in Elasticsearch.
+
+### Create an 'alerting' user in Kibana
+
+Add 
+
+
 Thrifty Elastic Alerting need the follow environment variables in order to connect to the Elasticsearch endpoint
 
 ```
@@ -11,6 +18,8 @@ Elastic__UserName="<username>"
 Elastic__Password="<password>"
 ```
 
+## Elastic ECK Deployment
+<a id="ECK"></a>
 If you're deploying TEA straight into your running ECK stack on Kubernetes, you can use the following deployment YAML to make everything work
 
 ``` yaml
@@ -111,11 +120,15 @@ spec:
               optional: false
 ```
 
-## Docker setup
-
+## Docker comopose deployment
+<a id="Docker"></a>
+``` yaml
+Somethings missing here!
+```
 
 ## To do's
 What is still needed
+ * How to create the 'alerting' user in Kibana
  * Documentation of docker settings
  * How to tag an alert in kibana and add the tag to a group in groups.json
  * Build script
