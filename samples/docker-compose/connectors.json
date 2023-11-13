@@ -1,0 +1,7 @@
+{
+    "SmtpServer": {
+        "Sender": "myemail@email.xyz",
+        "Host": "mysmtp.xyz",
+        "Port": 25
+    }
+}

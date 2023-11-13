@@ -1,0 +1,17 @@
+{
+  "Groups": {
+    "DevTeam": {
+      "Connectors": {
+        "Smtp": {
+          "Recipients": [
+            "email1@mail.xyz",
+            "email2@mail.xyz"
+          ]
+        },
+        "MsTeams": {
+          "WebHookUrl": "-"
+        }
+      }
+    }
+  }
+}
