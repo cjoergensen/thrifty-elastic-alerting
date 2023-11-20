@@ -1,17 +1,14 @@
 ﻿using HandlebarsDotNet;
-using Kibana.Alerts.Model;
+using Microsoft.Extensions.Configuration;
 using System.Net.Http.Headers;
+using ThriftyElasticAlerting.Abstractions.Connectors;
+using ThriftyElasticAlerting.Model;
 
-namespace Kibana.Alerts.Connectors;
-public class MsTeamsSettings
+namespace ThriftyElasticAlerting.Connectors.MsTeams;
+public sealed class Connector(HttpClient httpClient, IHandlebars handlebars) : IConnector
 {
-    public string MessageCardJson { get; set; } = string.Empty;
-    public string? WebHookUrl { get; set; }
-}
+    public const string Key = "MsTeams";
 
-public sealed class MsTeamsConnector(IConfiguration configuration, HttpClient httpClient, IHandlebars handlebars) : IConnector
-{
-    private readonly IConfiguration configuration = configuration;
     private readonly HttpClient httpClient = httpClient;
     private const string MediaType = "application/json";
     private const string DefaultMessageCardJson = """
@@ -43,7 +40,7 @@ public sealed class MsTeamsConnector(IConfiguration configuration, HttpClient ht
 
     public async Task Send(Alert alert, IConfigurationSection configurationSection, CancellationToken cancellationToken = default)
     {
-        var settings = new MsTeamsSettings();
+        var settings = new Settings();
         configurationSection.Bind(settings);
 
         ArgumentException.ThrowIfNullOrWhiteSpace(settings.WebHookUrl, nameof(settings.WebHookUrl));

@@ -1,10 +1,10 @@
-using Kibana.Alerts.Connectors;
-using Kibana.Alerts.Model;
-using Kibana.Alerts.Repositories;
+using ThriftyElasticAlerting.Abstractions.Connectors;
+using ThriftyElasticAlerting.Model;
+using ThriftyElasticAlerting.Repositories;
 
-namespace Kibana.Alerts;
+namespace ThriftyElasticAlerting.Worker;
 
-public class Worker(ILogger<Worker> logger, IAlertRepository alertRepository, ConnectorFactory connectorFactory, IConfiguration configuration) : BackgroundService
+public class BackgroundService(ILogger<BackgroundService> logger, IAlertRepository alertRepository, ConnectorFactory connectorFactory, IConfiguration configuration) : Microsoft.Extensions.Hosting.BackgroundService
 {
     private Dictionary<string, Alert> currentAlerts = [];
 

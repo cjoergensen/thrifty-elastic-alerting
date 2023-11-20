@@ -1,4 +1,4 @@
-﻿namespace Kibana.Alerts;
+﻿namespace ThriftyElasticAlerting.Worker;
 
 public static class ConfigurationValidator
 {
