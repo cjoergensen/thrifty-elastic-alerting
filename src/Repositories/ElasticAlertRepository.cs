@@ -15,7 +15,7 @@ internal class ElasticAlertRepository(ElasticClient client, IConfiguration confi
             kibanaUrl = kibanaUrl[..^1];
 
         var response = await client.SearchAsync<Document>(s => s
-            .Index(Extensions.IndexName)
+            .Index(ServiceCollectionExtensions.IndexName)
             .From(0)
             .Size(1000)
             .Query(q => q

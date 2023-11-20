@@ -5,7 +5,7 @@ using Nest;
 
 namespace ThriftyElasticAlerting.Repositories;
 
-public static class Extensions
+public static class ServiceCollectionExtensions
 {
     public const string IndexName = ".kibana_alerting_cases";
     public static void AddElasticClient(this IServiceCollection services, IConfiguration configuration)
@@ -21,9 +21,7 @@ public static class Extensions
         var pool = new SingleNodeConnectionPool(new Uri(url));
         var settings = new ConnectionSettings(pool, sourceSerializer: (_, _) => new SourceGenSerializer())
             .DefaultIndex(IndexName)
-            .ServerCertificateValidationCallback(CertificateValidations.AllowAll)
-            .BasicAuthentication(username, password)
-            .ServerCertificateValidationCallback(CertificateValidations.AllowAll);
+            .BasicAuthentication(username, password);
 
         services.AddSingleton(new ElasticClient(settings));
         services.AddSingleton<IAlertRepository, ElasticAlertRepository>();
