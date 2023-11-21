@@ -32,7 +32,7 @@ public static class ConfigurationValidator
         var groupsSection = configuration.GetSection("Groups");
         if (!groupsSection.Exists())
         {
-            throw new ConfigurationException("At least one groups needs to be present in configuration.");
+            throw new ConfigurationException("'Groups' section is missing or empty.");
         }
     }
 
@@ -65,9 +65,9 @@ public static class ConfigurationValidator
 
     private static void ValidateSmtpConnector(IConfiguration connectorsSection, IConfiguration configuration, string groupName)
     {
-        var smtpRecipients = connectorsSection.GetSection("Smtp:Recipients").Get<string[]>();
         if (connectorsSection.GetSection("Smtp").Exists())
         {
+            var smtpRecipients = connectorsSection.GetSection("Smtp:Recipients").Get<string[]>();
             if (smtpRecipients == null || smtpRecipients.Length == 0)
             {
                 throw new ConfigurationException($"For Group '{groupName}', the 'Smtp' connector requires a recipients array with one or more items.");
@@ -98,12 +98,4 @@ public static class ConfigurationValidator
             throw new ConfigurationException($"For Group '{groupName}', the 'MsTeams' connector requires a WebHookUrl.");
         }
     }
-}
-
-[System.Serializable]
-public class ConfigurationException : System.Exception
-{
-    public ConfigurationException() { }
-    public ConfigurationException(string message) : base($"Configuration Error: {message}") { }
-    public ConfigurationException(string message, System.Exception inner) : base($"Configuration Error: {message}", inner) { }
 }
