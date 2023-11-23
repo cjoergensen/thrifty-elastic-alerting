@@ -1,7 +1,5 @@
-﻿using Elasticsearch.Net;
-using HandlebarsDotNet;
+﻿using HandlebarsDotNet;
 using Kibana.Alerts.Model;
-using Nest;
 using System.Net;
 using System.Net.Mail;
 
