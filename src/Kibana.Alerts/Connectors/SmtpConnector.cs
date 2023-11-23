@@ -1,6 +1,8 @@
 ﻿using Elasticsearch.Net;
 using HandlebarsDotNet;
 using Kibana.Alerts.Model;
+using Nest;
+using System.Net;
 using System.Net.Mail;
 
 namespace Kibana.Alerts.Connectors;
@@ -37,6 +39,9 @@ public sealed class SmtpConnector(IConfiguration configuration, IHandlebars hand
 
         var host = configuration["SmtpServer:Host"];
         var sender = configuration["SmtpServer:Sender"];
+        bool.TryParse(configuration["SmtpServer:UseSsl"], out bool ssl);
+        var userName = configuration["SmtpServer:UserName"];
+        var password = configuration["SmtpServer:Password"];
 
         ArgumentException.ThrowIfNullOrWhiteSpace(host);
         ArgumentException.ThrowIfNullOrWhiteSpace(sender);
@@ -50,7 +55,19 @@ public sealed class SmtpConnector(IConfiguration configuration, IHandlebars hand
         var subjectTemplate = handlebars.Compile(settings.Subject ?? DefaultSubjectTemplate);
         var subject = subjectTemplate(alert);
 
-        SmtpClient client = new(host, port);
+        NetworkCredential? credentials = null;
+        if (!string.IsNullOrWhiteSpace(userName) || string.IsNullOrWhiteSpace(password))
+            credentials = new NetworkCredential(userName, password);
+
+        var client = new SmtpClient
+        {
+            Host = host,
+            Port = port,
+            EnableSsl = ssl,
+            UseDefaultCredentials = credentials == null,
+            Credentials = credentials
+        };
+
         MailMessage message = new()
         {
             IsBodyHtml = true,
