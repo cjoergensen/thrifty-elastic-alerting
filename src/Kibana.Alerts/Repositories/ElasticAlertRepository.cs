@@ -11,11 +11,11 @@ internal class ElasticAlertRepository: IAlertRepository
 {
     private readonly IConfiguration configuration;
     ElasticClient client;
-    public ElasticAlertRepository(IConfiguration configuration)
+    public ElasticAlertRepository(IConfiguration configuration, IUserRepository userRepository)
     {
         var url = configuration["Elastic:Url"];
         var username = "alerting";
-        var password = "a13rtin9";
+        var password = userRepository.GetPassword();
         client = Extensions.CreateClient(url, username, password);
         this.configuration = configuration;
     }
