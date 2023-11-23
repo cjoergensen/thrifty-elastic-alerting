@@ -22,7 +22,8 @@ try
 
     builder.Services.AddSmtpConnector();
     builder.Services.AddMsTeamsConnector();
-    builder.Services.AddSingleton<ConnectorFactory>();
+    builder.Services.AddSingleton<IConnectorFactory, ConnectorFactory>();
+    builder.Services.AddSingleton<IAlertingStrategy, NotifyOnStateChangeStrategy>(); // TODO: Make this configurable
 
     var host = builder.Build();
     host.Run();
