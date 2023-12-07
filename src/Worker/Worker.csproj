@@ -7,7 +7,7 @@
 	<PublishSingleFile>true</PublishSingleFile>
 	<SelfContained>true</SelfContained>
     <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
-    <AssemblyName>ThriftyElasticAlerting.$(MSBuildProjectName)</AssemblyName>
+    <AssemblyName>ThriftyElasticAlerting$(MSBuildProjectName)</AssemblyName>
     <RootNamespace>ThriftyElasticAlerting.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>	  
   </PropertyGroup>
 
