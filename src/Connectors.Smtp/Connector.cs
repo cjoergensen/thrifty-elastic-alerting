@@ -1,17 +1,15 @@
-﻿using Elasticsearch.Net;
-using HandlebarsDotNet;
-using Kibana.Alerts.Model;
+﻿using HandlebarsDotNet;
+using Microsoft.Extensions.Configuration;
+using System.Net;
 using System.Net.Mail;
+using ThriftyElasticAlerting.Abstractions.Connectors;
+using ThriftyElasticAlerting.Model;
 
-namespace Kibana.Alerts.Connectors;
-public class SmtpSettings
+namespace ThriftyElasticAlerting.Connectors.Smtp;
+public sealed class Connector(IConfiguration configuration, IHandlebars handlebars) : IConnector
 {
-    public string? Subject { get; set; }
-    public string? Body { get; set; }
-    public List<string> Recipients { get; set; } = [];
-}
-public sealed class SmtpConnector(IConfiguration configuration, IHandlebars handlebars) : IConnector
-{
+    public const string Key = "Smtp";
+
     private readonly IConfiguration configuration = configuration;
     private const string DefaultSubjectTemplate = "Important Update: {{Name}} is now {{ExecutionStatus.Status}}";
     private const string DefaultBodyTemplate = """
@@ -37,11 +35,14 @@ public sealed class SmtpConnector(IConfiguration configuration, IHandlebars hand
 
         var host = configuration["SmtpServer:Host"];
         var sender = configuration["SmtpServer:Sender"];
+        bool.TryParse(configuration["SmtpServer:UseSsl"], out bool ssl);
+        var userName = configuration["SmtpServer:UserName"];
+        var password = configuration["SmtpServer:Password"];
 
         ArgumentException.ThrowIfNullOrWhiteSpace(host);
         ArgumentException.ThrowIfNullOrWhiteSpace(sender);
 
-        var settings = new SmtpSettings();
+        var settings = new Settings();
         configurationSection.Bind(settings);
 
         var bodyTemplate = handlebars.Compile(settings.Body ?? DefaultBodyTemplate);
@@ -50,7 +51,19 @@ public sealed class SmtpConnector(IConfiguration configuration, IHandlebars hand
         var subjectTemplate = handlebars.Compile(settings.Subject ?? DefaultSubjectTemplate);
         var subject = subjectTemplate(alert);
 
-        SmtpClient client = new(host, port);
+        NetworkCredential? credentials = null;
+        if (!string.IsNullOrWhiteSpace(userName) || string.IsNullOrWhiteSpace(password))
+            credentials = new NetworkCredential(userName, password);
+
+        var client = new SmtpClient
+        {
+            Host = host,
+            Port = port,
+            EnableSsl = ssl,
+            UseDefaultCredentials = credentials == null,
+            Credentials = credentials
+        };
+        
         MailMessage message = new()
         {
             IsBodyHtml = true,

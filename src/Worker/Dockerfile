@@ -10,4 +10,4 @@ FROM mcr.microsoft.com/dotnet/runtime-deps:8.0-alpine
 WORKDIR /app
 COPY --from=build /app .
 USER $APP_UID
-ENTRYPOINT ["./Kibana.Alerts"]
+ENTRYPOINT ["./ThriftyElasticAlerting.Worker"]

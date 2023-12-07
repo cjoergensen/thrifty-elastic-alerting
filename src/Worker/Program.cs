@@ -1,7 +1,8 @@
 using HandlebarsDotNet;
-using Kibana.Alerts;
-using Kibana.Alerts.Connectors;
-using Kibana.Alerts.Repositories;
+using ThriftyElasticAlerting.Abstractions.Connectors;
+using ThriftyElasticAlerting.Connectors.MsTeams;
+using ThriftyElasticAlerting.Connectors.Smtp;
+using ThriftyElasticAlerting.Worker;
 
 try
 {
@@ -10,7 +11,7 @@ try
     builder.Configuration.AddJsonFile("connectors.json", optional: true, reloadOnChange: true);
     ConfigurationValidator.ValidateConfiguration(builder.Configuration);
 
-    builder.Services.AddHostedService<Worker>();
+    builder.Services.AddHostedService<ThriftyElasticAlerting.Worker.BackgroundService>();
     builder.Services.AddSingleton(factory =>
     {
         var handlebars = Handlebars.Create();
@@ -19,12 +20,10 @@ try
         return handlebars;
     });
 
-    builder.Services.AddElasticClient(builder.Configuration);
-    builder.Services.AddKeyedTransient<IConnector, SmtpConnector>("smtp");
-
-    builder.Services.AddHttpClient<IConnector, MsTeamsConnector>();
-    builder.Services.AddKeyedTransient<IConnector, MsTeamsConnector>("msteams");
-    builder.Services.AddSingleton<ConnectorFactory>();
+    builder.Services.AddSmtpConnector();
+    builder.Services.AddMsTeamsConnector();
+    builder.Services.AddSingleton<IConnectorFactory, ConnectorFactory>();
+    builder.Services.AddSingleton<IAlertingStrategy, NotifyOnStateChangeStrategy>(); // TODO: Make this configurable
 
     var host = builder.Build();
     host.Run();

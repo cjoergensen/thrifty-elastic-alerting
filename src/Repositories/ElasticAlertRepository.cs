@@ -1,24 +1,11 @@
-﻿using Kibana.Alerts.Model;
-using Nest;
+﻿using Nest;
+using ThriftyElasticAlerting.Model;
+using Microsoft.Extensions.Configuration;
 
-namespace Kibana.Alerts.Repositories;
-public interface IAlertRepository
-{
-    Task<IEnumerable<Alert>> GetAll();
-}
+namespace ThriftyElasticAlerting.Repositories;
 
-internal class ElasticAlertRepository: IAlertRepository
+internal class ElasticAlertRepository(ElasticClient client, IConfiguration configuration) : IAlertRepository
 {
-    private readonly IConfiguration configuration;
-    ElasticClient client;
-    public ElasticAlertRepository(IConfiguration configuration, IUserRepository userRepository)
-    {
-        var url = configuration["Elastic:Url"];
-        var username = configuration["Elastic:UserName"];
-        var password = configuration["Elastic:Password"];
-        client = Extensions.CreateClient(url, username, password);
-        this.configuration = configuration;
-    }
     public async Task<IEnumerable<Alert>> GetAll()
     {
         var kibanaUrl = configuration["Elastic:KibanaUrl"];
@@ -28,7 +15,7 @@ internal class ElasticAlertRepository: IAlertRepository
             kibanaUrl = kibanaUrl[..^1];
 
         var response = await client.SearchAsync<Document>(s => s
-            .Index(Extensions.IndexName)
+            .Index(ServiceCollectionExtensions.IndexName)
             .From(0)
             .Size(1000)
             .Query(q => q
@@ -50,3 +37,4 @@ internal class ElasticAlertRepository: IAlertRepository
         });
     }
 }
+

@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+	<PublishSingleFile>true</PublishSingleFile>
+	<SelfContained>true</SelfContained>
+    <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+    <AssemblyName>ThriftyElasticAlerting.$(MSBuildProjectName)</AssemblyName>
+    <RootNamespace>ThriftyElasticAlerting.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>	  
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Handlebars.Net" Version="2.1.4" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Connectors.Abstrations\Connectors.Abstrations.csproj" />
+    <ProjectReference Include="..\Connectors.MsTeams\Connectors.MsTeams.csproj" />
+    <ProjectReference Include="..\Connectors.Smtp\Connectors.Smtp.csproj" />
+    <ProjectReference Include="..\Model\Model.csproj" />
+    <ProjectReference Include="..\Repositories\Repositories.csproj" />
+  </ItemGroup>
+</Project>
