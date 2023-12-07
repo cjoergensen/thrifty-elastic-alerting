@@ -17,7 +17,7 @@ internal class ElasticUserRepository : IUserRepository
         var username = configuration["Elastic:UserName"];
         var password = configuration["Elastic:Password"];
         client = Extensions.CreateClient(url, username, password);
-        alertingPassword = Guid.NewGuid().ToString().Replace("-", "");
+        // alertingPassword = Guid.NewGuid().ToString().Replace("-", "");
     }
     public string GetPassword() => alertingPassword;
 
@@ -25,10 +25,10 @@ internal class ElasticUserRepository : IUserRepository
     {
         client.LowLevel.DoRequest<StringResponse>(
             Elasticsearch.Net.HttpMethod.PUT,
-            "_security/user/alerting",
+            $"_security/user/{username}",
             PostData.Serializable(new
             {
-                password = alertingPassword,
+                // password = password,
                 roles = new List<string> { "kibana_admin" }
             }));
     }
