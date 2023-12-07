@@ -2,6 +2,7 @@ using HandlebarsDotNet;
 using ThriftyElasticAlerting.Abstractions.Connectors;
 using ThriftyElasticAlerting.Connectors.MsTeams;
 using ThriftyElasticAlerting.Connectors.Smtp;
+using ThriftyElasticAlerting.Repositories;
 using ThriftyElasticAlerting.Worker;
 
 try
@@ -22,8 +23,11 @@ try
 
     builder.Services.AddSmtpConnector();
     builder.Services.AddMsTeamsConnector();
+    builder.Services.AddElasticClient(builder.Configuration);
     builder.Services.AddSingleton<IConnectorFactory, ConnectorFactory>();
     builder.Services.AddSingleton<IAlertingStrategy, NotifyOnStateChangeStrategy>(); // TODO: Make this configurable
+
+
 
     var host = builder.Build();
     host.Run();
