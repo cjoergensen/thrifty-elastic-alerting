@@ -26,7 +26,7 @@ jobs:
     - name: Build image
       shell: bash         
       run: | 
-          docker build -t ${{env.imageRepository}}:${{ github.event.inputs.version }} -f ./src/Kibana.Alerts/Dockerfile ./src/Kibana.Alerts/  
+          docker build -t ${{env.imageRepository}}:${{ github.event.inputs.version }} -f ./src/Worker/Dockerfile ./src/
           docker tag ${{env.imageRepository}}:${{ github.event.inputs.version }} ${{env.imageRepository}}:latest
           docker push --all-tags ${{env.imageRepository}}
 
