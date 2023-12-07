@@ -25,5 +25,6 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton(new ElasticClient(settings));
         services.AddSingleton<IAlertRepository, ElasticAlertRepository>();
+        services.AddSingleton<IUserRepository, ElasticUserRepository>();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using HandlebarsDotNet;
 using Microsoft.Extensions.Configuration;
+using System.Net;
 using System.Net.Mail;
 using ThriftyElasticAlerting.Abstractions.Connectors;
 using ThriftyElasticAlerting.Model;
@@ -34,6 +35,9 @@ public sealed class Connector(IConfiguration configuration, IHandlebars handleba
 
         var host = configuration["SmtpServer:Host"];
         var sender = configuration["SmtpServer:Sender"];
+        bool.TryParse(configuration["SmtpServer:UseSsl"], out bool ssl);
+        var userName = configuration["SmtpServer:UserName"];
+        var password = configuration["SmtpServer:Password"];
 
         ArgumentException.ThrowIfNullOrWhiteSpace(host);
         ArgumentException.ThrowIfNullOrWhiteSpace(sender);
@@ -47,7 +51,19 @@ public sealed class Connector(IConfiguration configuration, IHandlebars handleba
         var subjectTemplate = handlebars.Compile(settings.Subject ?? DefaultSubjectTemplate);
         var subject = subjectTemplate(alert);
 
-        SmtpClient client = new(host, port);
+        NetworkCredential? credentials = null;
+        if (!string.IsNullOrWhiteSpace(userName) || string.IsNullOrWhiteSpace(password))
+            credentials = new NetworkCredential(userName, password);
+
+        var client = new SmtpClient
+        {
+            Host = host,
+            Port = port,
+            EnableSsl = ssl,
+            UseDefaultCredentials = credentials == null,
+            Credentials = credentials
+        };
+        
         MailMessage message = new()
         {
             IsBodyHtml = true,

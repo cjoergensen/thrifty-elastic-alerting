@@ -37,3 +37,4 @@ internal class ElasticAlertRepository(ElasticClient client, IConfiguration confi
         });
     }
 }
+
