@@ -14,8 +14,8 @@ internal class ElasticAlertRepository: IAlertRepository
     public ElasticAlertRepository(IConfiguration configuration, IUserRepository userRepository)
     {
         var url = configuration["Elastic:Url"];
-        var username = "alerting";
-        var password = userRepository.GetPassword();
+        var username = configuration["Elastic:UserName"];
+        var password = configuration["Elastic:Password"];
         client = Extensions.CreateClient(url, username, password);
         this.configuration = configuration;
     }
