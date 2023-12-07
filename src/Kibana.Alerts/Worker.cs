@@ -4,14 +4,15 @@ using Kibana.Alerts.Repositories;
 
 namespace Kibana.Alerts;
 
-public class Worker(ILogger<Worker> logger, IAlertRepository alertRepository, ConnectorFactory connectorFactory, IConfiguration configuration) : BackgroundService
+public class Worker(ILogger<Worker> logger, IUserRepository userRepository, IAlertRepository alertRepository, ConnectorFactory connectorFactory, IConfiguration configuration) : BackgroundService
 {
     private Dictionary<string, Alert> currentAlerts = [];
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        logger.LogInformation("Ensuring alerting user is in Kibana..");
+        userRepository.UpdateUser();
         logger.LogInformation("Service operational, alerts are monitored.");
-
         currentAlerts = (await alertRepository.GetAll()).ToDictionary(alert => alert.Id, alert => alert);
         while (!stoppingToken.IsCancellationRequested)
         {
