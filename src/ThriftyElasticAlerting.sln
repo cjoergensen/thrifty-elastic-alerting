@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\LICENSE = ..\LICENSE
 		..\README.md = ..\README.md
 		..\.github\workflows\release.yml = ..\.github\workflows\release.yml
+		..\.github\workflows\snyk-container.yml = ..\.github\workflows\snyk-container.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Model", "Model\Model.csproj", "{4CF4F1DC-E5CB-43CC-A8E3-60142C2CCE91}"
@@ -23,7 +24,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Connectors.Smtp", "Connecto
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Worker", "Worker\Worker.csproj", "{A8AD24CC-680B-4802-9C54-7BCD5884BE3F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worker.Tests", "Worker.Tests\Worker.Tests.csproj", "{79066DDD-E9E3-457C-8359-AEDB4FB9F8F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Worker.Tests", "Worker.Tests\Worker.Tests.csproj", "{79066DDD-E9E3-457C-8359-AEDB4FB9F8F7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
