@@ -3,7 +3,7 @@ ARG TARGETARCH
 WORKDIR /source
 
 COPY . .
-RUN dotnet publish ./src/Worker/Worker.csproj -a $TARGETARCH -o /app --self-contained /p:PublishTrimmed=false /p:PublishReadyToRun=true /p:PublishSingleFile=true
+RUN dotnet publish ./Worker/Worker.csproj -a $TARGETARCH -o /app --self-contained /p:PublishTrimmed=false /p:PublishReadyToRun=true /p:PublishSingleFile=true
 
 # final stage/image
 FROM mcr.microsoft.com/dotnet/runtime:8.0-jammy-chiseled
