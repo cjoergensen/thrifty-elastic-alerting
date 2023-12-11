@@ -3,7 +3,7 @@ ARG TARGETARCH
 WORKDIR /source
 
 COPY . .
-RUN dotnet publish ./Worker/Worker.csproj -c Release -a $TARGETARCH -o /app --self-contained /p:DebugType=None /p:DebugSymbols=false
+RUN dotnet publish ./Worker/Worker.csproj -c Release -a $TARGETARCH -o /app /p:DebugType=None /p:DebugSymbols=false
 
 # final stage/image
 FROM mcr.microsoft.com/dotnet/runtime-deps:8.0-alpine
