@@ -8,6 +8,6 @@ public static class ServiceCollectionExtensions
 {
     public static void AddSmtpConnector(this IServiceCollection services)
     {
-        services.AddKeyedTransient<IConnector, Connector>(Connector.Key);
+        services.AddKeyedTransient<IConnector, Connector>(Connector.Key.ToLowerInvariant());
     }
 }

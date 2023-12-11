@@ -5,7 +5,7 @@ using Nest;
 
 namespace ThriftyElasticAlerting.Repositories;
 
-public static class ServiceCollectionExtensions
+public static class Extensions
 {
     public const string IndexName = ".kibana_alerting_cases";
     public static void AddElasticClient(this IServiceCollection services, IConfiguration configuration)
@@ -13,7 +13,12 @@ public static class ServiceCollectionExtensions
         var url = configuration["Elastic:Url"];
         var username = configuration["Elastic:UserName"];
         var password = configuration["Elastic:Password"];
+        services.AddSingleton(CreateClient(url, username, password));
+        services.AddSingleton<IAlertRepository, ElasticAlertRepository>();
+    }
 
+    public static ElasticClient CreateClient(string? url, string? username, string? password)
+    {
         ArgumentException.ThrowIfNullOrWhiteSpace(url, nameof(url));
         ArgumentException.ThrowIfNullOrWhiteSpace(username, nameof(username));
         ArgumentException.ThrowIfNullOrWhiteSpace(password, nameof(password));
@@ -21,10 +26,9 @@ public static class ServiceCollectionExtensions
         var pool = new SingleNodeConnectionPool(new Uri(url));
         var settings = new ConnectionSettings(pool, sourceSerializer: (_, _) => new SourceGenSerializer())
             .DefaultIndex(IndexName)
-            .BasicAuthentication(username, password);
-
-        services.AddSingleton(new ElasticClient(settings));
-        services.AddSingleton<IAlertRepository, ElasticAlertRepository>();
-        services.AddSingleton<IUserRepository, ElasticUserRepository>();
+            .ServerCertificateValidationCallback(CertificateValidations.AllowAll)
+            .BasicAuthentication(username, password)
+            .ServerCertificateValidationCallback(CertificateValidations.AllowAll);
+        return new ElasticClient(settings);
     }
 }

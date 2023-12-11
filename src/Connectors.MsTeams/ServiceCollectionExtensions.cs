@@ -7,8 +7,8 @@ public static class ServiceCollectionExtensions
 {
     public static void AddMsTeamsConnector(this IServiceCollection services)
     {
-        services.AddHttpClient<IConnector, Connector>();
-        services.AddKeyedTransient<IConnector, Connector>(Connector.Key);
+        services.AddHttpClient<Connector>();
+        services.AddKeyedTransient<IConnector, Connector>(Connector.Key.ToLowerInvariant());
     }
 
 }

@@ -1,6 +1,7 @@
 ﻿using Nest;
 using ThriftyElasticAlerting.Model;
 using Microsoft.Extensions.Configuration;
+using System;
 
 namespace ThriftyElasticAlerting.Repositories;
 
@@ -15,7 +16,7 @@ internal class ElasticAlertRepository(ElasticClient client, IConfiguration confi
             kibanaUrl = kibanaUrl[..^1];
 
         var response = await client.SearchAsync<Document>(s => s
-            .Index(ServiceCollectionExtensions.IndexName)
+            .Index(Extensions.IndexName)
             .From(0)
             .Size(1000)
             .Query(q => q
