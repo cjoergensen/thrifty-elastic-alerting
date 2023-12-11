@@ -6,7 +6,7 @@ COPY . .
 RUN dotnet publish ./Worker/Worker.csproj -c Release -a $TARGETARCH -o /app --self-contained /p:DebugType=None /p:DebugSymbols=false
 
 # final stage/image
-FROM mcr.microsoft.com/dotnet/runtime:8.0-alpine
+FROM mcr.microsoft.com/dotnet/runtime-deps:8.0-alpine
 WORKDIR /app
 COPY --from=build /app .
 USER $APP_UID
