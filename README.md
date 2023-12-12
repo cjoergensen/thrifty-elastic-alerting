@@ -1,5 +1,5 @@
 # thrifty-elastic-alerting (TEA)
-Are you financially challenged, skint, or just to cheep to purchase an Elastic license? Still, you're desperately yearning for those snazzy Kibana alerting features? Well, look no further because this repository has got your penny-pinching back!
+Are you financially challenged, skint, or just to cheap to purchase an Elastic license? Still, you're desperately yearning for those snazzy Kibana alerting features? Well, look no further because this repository has got your penny-pinching back!
 
 # About this project
 TEA is an open-source project designed for efficient alerting in Elasticsearch environments. It operates as a background process or daemon, continuously monitoring the status of alerting rules. When a change is detected, TEA promptly notifies the relevant recipients, providing a streamlined and responsive alerting system.

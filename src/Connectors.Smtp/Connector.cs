@@ -1,7 +1,9 @@
 ﻿using HandlebarsDotNet;
+using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.Extensions.Configuration;
-using System.Net;
-using System.Net.Mail;
+using MimeKit;
+using MimeKit.Text;
 using ThriftyElasticAlerting.Abstractions.Connectors;
 using ThriftyElasticAlerting.Model;
 
@@ -35,7 +37,7 @@ public sealed class Connector(IConfiguration configuration, IHandlebars handleba
 
         var host = configuration["SmtpServer:Host"];
         var sender = configuration["SmtpServer:Sender"];
-        bool.TryParse(configuration["SmtpServer:UseSsl"], out bool ssl);
+        _ = bool.TryParse(configuration["SmtpServer:UseSsl"], out bool useSsl);
         var userName = configuration["SmtpServer:UserName"];
         var password = configuration["SmtpServer:Password"];
 
@@ -51,34 +53,28 @@ public sealed class Connector(IConfiguration configuration, IHandlebars handleba
         var subjectTemplate = handlebars.Compile(settings.Subject ?? DefaultSubjectTemplate);
         var subject = subjectTemplate(alert);
 
-        NetworkCredential? credentials = null;
-        if (!string.IsNullOrWhiteSpace(userName) || string.IsNullOrWhiteSpace(password))
-            credentials = new NetworkCredential(userName, password);
-
-        var client = new SmtpClient
-        {
-            Host = host,
-            Port = port,
-            EnableSsl = ssl,
-            UseDefaultCredentials = credentials == null,
-            Credentials = credentials
-        };
-        
-        MailMessage message = new()
-        {
-            IsBodyHtml = true,
-            Body = body,
-            BodyEncoding = System.Text.Encoding.UTF8,
-            From = new MailAddress(sender),
-            Priority = MailPriority.High,
-            Subject = subject
-        };
-
+        var message = new MimeMessage();
+        message.From.Add(new MailboxAddress(sender, sender));
         foreach (var recipient in settings.Recipients)
         {
-            message.Bcc.Add(recipient);
+            message.To.Add(new MailboxAddress(recipient, recipient));
         }
 
-        await client.SendMailAsync(message, cancellationToken);
+        message.Subject = subject;
+        message.Body = new TextPart(TextFormat.Html)
+        {
+            Text = body
+        };
+
+        using var client = new SmtpClient();
+        
+        var socketOptions = useSsl ? SecureSocketOptions.SslOnConnect : SecureSocketOptions.None;
+        await client.ConnectAsync(host, port, socketOptions, cancellationToken);
+        
+        if (!string.IsNullOrWhiteSpace(userName) && !string.IsNullOrWhiteSpace(password))
+            await client.AuthenticateAsync(userName, password, cancellationToken);
+        
+        await client.SendAsync(message, cancellationToken);
+        await client.DisconnectAsync(true, cancellationToken);
     }
 }

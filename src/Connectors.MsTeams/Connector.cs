@@ -45,7 +45,8 @@ public sealed class Connector(HttpClient httpClient, IHandlebars handlebars) : I
 
         ArgumentException.ThrowIfNullOrWhiteSpace(settings.WebHookUrl, nameof(settings.WebHookUrl));
 
-        var cardTemplate = handlebars.Compile(settings.MessageCardJson ?? DefaultMessageCardJson);
+        var cardJson = string.IsNullOrWhiteSpace(settings.MessageCardJson) ? DefaultMessageCardJson : settings.MessageCardJson;
+        var cardTemplate = handlebars.Compile(cardJson);
         var card = cardTemplate(alert);
 
         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaType));
